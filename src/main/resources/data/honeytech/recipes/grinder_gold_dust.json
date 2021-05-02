@@ -1,0 +1,9 @@
+{
+  "type": "honeytech:grinder_recipe",
+  "input" : {
+    "item": "minecraft:gold_ore"
+  },
+  "outputItem": "honeytech:gold_dust",
+  "outputAmount": 2,
+  "requiredClicks": 5
+}

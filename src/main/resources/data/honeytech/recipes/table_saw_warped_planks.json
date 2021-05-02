@@ -1,0 +1,8 @@
+{
+  "type": "honeytech:table_saw",
+  "input" : {
+    "tag": "minecraft:warped_stems"
+  },
+  "outputItem": "minecraft:warped_planks",
+  "outputAmount": 6
+}

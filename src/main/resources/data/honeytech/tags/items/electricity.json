@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "honeytech:cable",
+    "honeytech:coal_generator_mk1",
+    "honeytech:coal_generator_mk2",
+    "honeytech:coal_generator_mk3",
+    "honeytech:small_battery",
+    "honeytech:medium_battery",
+    "honeytech:big_battery"
+
+  ]
+}

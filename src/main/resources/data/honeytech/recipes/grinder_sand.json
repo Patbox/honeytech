@@ -1,0 +1,9 @@
+{
+  "type": "honeytech:grinder_recipe",
+  "input" : {
+    "item": "minecraft:gravel"
+  },
+  "outputItem": "minecraft:sand",
+  "outputAmount": 2,
+  "requiredClicks": 3
+}

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "ore_washer",
+  "pattern": [
+    "T",
+    "W",
+    "C"
+  ],
+  "key": {
+    "C": {
+      "item": "minecraft:cauldron"
+    },
+    "T": {
+      "tag": "minecraft:trapdoors"
+    },
+    "W": {
+      "tag": "minecraft:wool"
+    }
+  },
+  "result": {
+    "item": "honeytech:basic_ore_washer"
+  }
+}

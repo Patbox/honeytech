@@ -1,0 +1,9 @@
+{
+  "type": "honeytech:grinder_recipe",
+  "input" : {
+    "item": "minecraft:sugar_cane"
+  },
+  "outputItem": "minecraft:sugar",
+  "outputAmount": 2,
+  "requiredClicks": 1
+}

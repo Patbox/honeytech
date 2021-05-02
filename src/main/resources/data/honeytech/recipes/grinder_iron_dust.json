@@ -1,0 +1,10 @@
+{
+  "type": "honeytech:grinder_recipe",
+  "input" : {
+    "item": "minecraft:iron_ore"
+  },
+  "outputItem": "honeytech:iron_dust",
+  "outputAmount": 2,
+  "requiredClicks": 5,
+  "requiredPower": 2
+}

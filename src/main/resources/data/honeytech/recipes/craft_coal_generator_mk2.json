@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "generators",
+  "pattern": [
+    "III",
+    "MFM",
+    "IBI"
+  ],
+  "key": {
+    "F": {
+      "item": "honeytech:coal_generator_mk1"
+    },
+    "I": {
+      "item": "minecraft:iron_block"
+    },
+    "M": {
+      "item": "honeytech:motor"
+    },
+    "B": {
+      "item": "honeytech:battery"
+    }
+  },
+  "result": {
+    "item": "honeytech:coal_generator_mk2"
+  }
+}

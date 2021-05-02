@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "honeytech:wrench",
+    "honeytech:ammeter",
+    "honeytech:portable_crafting",
+    "honeytech:portable_trashcan"
+  ]
+}

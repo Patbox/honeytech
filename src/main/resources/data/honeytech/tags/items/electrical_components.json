@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "honeytech:copper_wire",
+    "honeytech:magnet",
+    "honeytech:motor",
+    "honeytech:fan",
+    "honeytech:circuit_board",
+    "honeytech:battery"
+  ]
+}

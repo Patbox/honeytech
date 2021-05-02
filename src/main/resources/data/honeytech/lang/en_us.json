@@ -1,0 +1,79 @@
+{
+  "block.honeytech.basic_grinder": "Basic Grinder",
+  "block.honeytech.table_saw": "Table Saw",
+  "block.honeytech.basic_ore_washer": "Basic Ore Washer",
+  "block.honeytech.enchanced_furnace": "Enchanced Furnace",
+
+  "block.honeytech.pipe": "Pipe",
+  "block.honeytech.item_extractor": "Item Extractor",
+  "block.honeytech.trashcan": "Trash Can",
+  "block.honeytech.cable": "Cable",
+  "block.honeytech.coal_generator_mk1": "Coal Generator I",
+  "block.honeytech.coal_generator_mk2": "Coal Generator II",
+  "block.honeytech.coal_generator_mk3": "Coal Generator III",
+  "block.honeytech.small_battery": "Small Battery",
+  "block.honeytech.medium_battery": "Medium Battery",
+  "block.honeytech.big_battery": "Big Battery",
+
+  "item.honeytech.guide_book": "HoneyTech Guide Book",
+  "item.honeytech.portable_crafting": "Portable Crafting",
+  "item.honeytech.portable_trashcan": "Portable Trash Can",
+  "item.honeytech.wrench": "Wrench",
+  "item.honeytech.ammeter": "Ammeter",
+
+  "item.honeytech.diamond_dust": "Diamond Dust",
+  "item.honeytech.gold_dust": "Gold Dust",
+  "item.honeytech.iron_dust": "Iron Dust",
+  "item.honeytech.coal_dust": "Coal Dust",
+  "item.honeytech.copper_dust": "Copper Dust",
+  "item.honeytech.aluminium_dust": "Aluminium Dust",
+
+  "item.honeytech.copper_ingot": "Copper Ingot",
+  "item.honeytech.aluminium_ingot": "Aluminium Ingot",
+
+  "item.honeytech.copper_wire": "Copper Wire",
+  "item.honeytech.motor": "Motor",
+  "item.honeytech.magnet": "Magnet",
+  "item.honeytech.fan": "Fan",
+  "item.honeytech.circuit_board": "Circuit Board",
+  "item.honeytech.battery": "Battery",
+
+  "gui.honeytech.showRecipes": "Show Recipes",
+  "gui.grinder.recipes": "Grinder Recipes",
+  "gui.honeytech.table_saw.recipes": "Table Saw Recipes",
+  "gui.honeytech.guide.main.name": "HoneyTech Guide Book",
+  "gui.honeytech.guide.basic_machines.name": "Basic Machines",
+  "gui.honeytech.guide.basic_machines.description": "Simple machines to get things started",
+  "gui.honeytech.guide.resources.name": "Resources",
+  "gui.honeytech.guide.resources.description": "Main resources used for crafting",
+  "gui.honeytech.guide.useful_items.name": "Useful items",
+  "gui.honeytech.guide.useful_items.description": "General use useful items",
+  "gui.honeytech.guide.storage.name": "Storage and transport",
+  "gui.honeytech.guide.storage.description": "Everything for storing and transporting materials",
+  "gui.honeytech.guide.electrical_components.name": "Electrical Components",
+  "gui.honeytech.guide.electrical_components.description": "Basic Components used for creating more powerful machines",
+  "gui.honeytech.guide.electricity.name": "Electricity and Electronics",
+  "gui.honeytech.guide.electricity.description": "Electronic machines, generators and batteries",
+
+  "gui.honeytech.guide.vanilla.description": "HoneyTech recipes for vanilla items",
+
+  "gui.honeytech.guide.item_count": "[%s Items]",
+
+  "gui.honeytech.guide.no_recipes": "This item doesn't have any recipes!",
+  "gui.honeytech.guide.recipe.type.shaped": "Shaped recipe",
+  "gui.honeytech.guide.recipe.type.shapeless": "Shapeless recipe",
+  "gui.honeytech.guide.recipe.type.special": "Special recipe",
+
+  "gui.honeytech.guide.recipe.for": "%s Recipe",
+
+  "gui.honeytech.guide.recipe.clicks": "Required clicks: %s",
+  "gui.honeytech.guide.recipe.smelts": "Smelted for: %s",
+
+  "gui.honeytech.portable_crafting": "Portable Crafting",
+  "gui.honeytech.trashcan": "Trash Can",
+
+  "gui.honeytech.battery_charge": "%s / %s (%s)",
+
+  "advancements.honeytech.root.title": "HoneyTech",
+  "advancements.honeytech.root.description": "Technological revolution has begun..."
+}

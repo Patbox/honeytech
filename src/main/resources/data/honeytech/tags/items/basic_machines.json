@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "honeytech:basic_grinder",
+    "honeytech:table_saw",
+    "honeytech:basic_ore_washer",
+    "honeytech:enchanced_furnace",
+    "honeytech:trashcan"
+  ]
+}

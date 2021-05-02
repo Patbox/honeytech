@@ -1,0 +1,8 @@
+{
+  "type": "honeytech:table_saw",
+  "input" : {
+    "tag": "minecraft:planks"
+  },
+  "outputItem": "minecraft:stick",
+  "outputAmount": 4
+}

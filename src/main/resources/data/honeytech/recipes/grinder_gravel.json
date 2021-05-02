@@ -1,0 +1,9 @@
+{
+  "type": "honeytech:grinder_recipe",
+  "input" : {
+    "item": "minecraft:cobblestone"
+  },
+  "outputItem": "minecraft:gravel",
+  "outputAmount": 2,
+  "requiredClicks": 3
+}

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "item_extractor",
+  "pattern": [
+    "A A",
+    "CHC",
+    "ACA"
+  ],
+  "key": {
+    "A": {
+      "item": "honeytech:aluminium_ingot"
+    },
+    "C": {
+      "item": "honeytech:copper_ingot"
+    },
+    "H": {
+      "item": "minecraft:hopper"
+    }
+  },
+  "result": {
+    "item": "honeytech:item_extractor"
+  }
+}

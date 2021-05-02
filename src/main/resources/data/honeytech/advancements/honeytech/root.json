@@ -1,0 +1,25 @@
+{
+  "display": {
+    "icon": {
+      "item": "honeytech:guide_book"
+    },
+    "title": {
+      "translate": "advancements.honeytech.root.title"
+    },
+    "description": {
+      "translate": "advancements.honeytech.root.description"
+    },
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false,
+    "hidden": false,
+    "background": "minecraft:textures/block/iron_block.png"
+  },
+  "criteria": {
+    "used_guide": {
+      "trigger": "honeytech:open_guide",
+      "conditions": {}
+    }
+  },
+  "requirements": []
+}
