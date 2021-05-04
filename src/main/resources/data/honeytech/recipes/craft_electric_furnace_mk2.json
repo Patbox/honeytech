@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "electric_grinder",
+  "pattern": [
+    "III",
+    "MFM",
+    "IBI"
+  ],
+  "key": {
+    "F": {
+      "item": "honeytech:electric_furnace_mk1"
+    },
+    "I": {
+      "item": "minecraft:iron_block"
+    },
+    "M": {
+      "item": "honeytech:energy_regulator"
+    },
+    "B": {
+      "item": "honeytech:battery"
+    }
+  },
+  "result": {
+    "item": "honeytech:electric_furnace_mk2"
+  }
+}

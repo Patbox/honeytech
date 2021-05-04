@@ -25,13 +25,13 @@ public class BatteryBlockEntity extends BlockEntity implements Tickable, EnergyH
                 EnergyHolder holder = (EnergyHolder) entity;
                 double proc = holder.getEnergyAmount() / holder.getMaxEnergyCapacity();
 
-                if (holder.isEnergySource() && !this.isFullEnergy() && proc > 0.55) {
+                if (holder.isEnergySource() && !this.isFullEnergy() && proc > 0.65) {
                     double newAmount = Math.max(0,
                             Math.min(this.getMaxEnergyTransferCapacity(dir.getOpposite(), false),
                                     this.getMaxEnergyCapacity() - this.getEnergyAmount()));
                     double tr = holder.transferEnergy(-newAmount, dir.getOpposite());
                     this.setEnergyAmount(this.getEnergyAmount() - tr);
-                } else if (!holder.isFullEnergy() && holder.isEnergyConsumer() && proc < 0.45) {
+                } else if (!holder.isFullEnergy() && holder.isEnergyConsumer() && proc < 0.60) {
                     double amount = Math.min(this.getMaxEnergyTransferCapacity(dir.getOpposite(), true), this.getEnergyAmount());
                     if (amount >= 0.001) {
                         double tr = holder.transferEnergy(amount, dir.getOpposite());
@@ -102,6 +102,10 @@ public class BatteryBlockEntity extends BlockEntity implements Tickable, EnergyH
 
     @Override
     public double getMaxEnergyTransferCapacity(Direction dir, boolean isDraining) {
-        return isDraining ? 256 : 128;
+        return getMaxTransfer(isDraining);
+    }
+
+    public static double getMaxTransfer(boolean isDraining) {
+        return isDraining ? 256 : 64;
     }
 }

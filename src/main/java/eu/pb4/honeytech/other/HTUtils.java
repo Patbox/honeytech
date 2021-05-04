@@ -1,19 +1,20 @@
 package eu.pb4.honeytech.other;
 
 import eu.pb4.honeytech.HoneyTechMod;
-import eu.pb4.polymer.block.VirtualHeadBlock;
-import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.*;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 public class HTUtils {
+    public static Style WHITE_STYLE = Style.EMPTY.withItalic(false).withColor(Formatting.WHITE);
+    private static final Style TOOLTIP_BASE = Style.EMPTY.withItalic(false).withColor(Formatting.DARK_GRAY);
+    public static String INVALID_TEXTURE = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGUyY2UzMzcyYTNhYzk3ZmRkYTU2MzhiZWYyNGIzYmM0OWY0ZmFjZjc1MWZlOWNhZDY0NWYxNWE3ZmI4Mzk3YyJ9fX0=";
+
     public static Identifier id(String path) {
         return new Identifier(HoneyTechMod.ID, path);
     }
@@ -59,5 +60,10 @@ public class HTUtils {
         float h = -MathHelper.cos(-pitch * 0.017453292F);
         float i = MathHelper.sin(-pitch * 0.017453292F);
         return new Vec3d((g * h), i, (f * h));
+    }
+
+    public static Text styledTooltip(String path, Object... values) {
+        return new LiteralText("» ").setStyle(TOOLTIP_BASE)
+                .append(getText("tooltip", path, values).formatted(Formatting.GOLD));
     }
 }

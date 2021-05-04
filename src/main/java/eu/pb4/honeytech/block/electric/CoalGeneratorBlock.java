@@ -1,12 +1,10 @@
 package eu.pb4.honeytech.block.electric;
 
-import eu.pb4.honeytech.block.basic_machines.TableSawBlock;
-import eu.pb4.honeytech.block.machines_common.GrinderBlock;
-import eu.pb4.honeytech.blockentity.electric.CableBlockEntity;
+import com.google.common.collect.ImmutableList;
+import eu.pb4.honeytech.block.BlockWithItemTooltip;
+import eu.pb4.honeytech.block.WrenchableBlock;
 import eu.pb4.honeytech.blockentity.electric.CoalGeneratorBlockEntity;
-import eu.pb4.honeytech.blockentity.machines_common.GrinderBlockEntity;
-import eu.pb4.honeytech.blockentity.machines_common.OreWasherBlockEntity;
-import eu.pb4.polymer.block.VirtualBlock;
+import eu.pb4.honeytech.other.HTUtils;
 import eu.pb4.polymer.block.VirtualHeadBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
@@ -18,23 +16,25 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
+import net.minecraft.state.property.Property;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
 
-public class CoalGeneratorBlock extends Block implements VirtualHeadBlock, BlockEntityProvider {
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+public class CoalGeneratorBlock extends Block implements VirtualHeadBlock, BlockEntityProvider, WrenchableBlock, BlockWithItemTooltip {
     public final int multiplier;
     public CoalGeneratorBlock(Settings settings, int multip) {
         super(settings);
@@ -44,12 +44,12 @@ public class CoalGeneratorBlock extends Block implements VirtualHeadBlock, Block
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(Properties.ROTATION, Properties.LIT);
+        builder.add(Properties.HORIZONTAL_FACING, Properties.LIT);
     }
 
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(Properties.ROTATION, MathHelper.floor((double)(ctx.getPlayerYaw() * 16.0F / 360.0F) + 0.5D) & 15);
+        return this.getDefaultState().with(Properties.HORIZONTAL_FACING, ctx.getPlayerFacing().getOpposite());
     }
 
     @Override
@@ -92,7 +92,7 @@ public class CoalGeneratorBlock extends Block implements VirtualHeadBlock, Block
 
     @Override
     public BlockState getVirtualBlockState(BlockState state) {
-        return Blocks.PLAYER_HEAD.getDefaultState().with(Properties.ROTATION, state.get(Properties.ROTATION));
+        return Blocks.PLAYER_HEAD.getDefaultState().with(Properties.ROTATION, state.get(Properties.HORIZONTAL_FACING).getOpposite().getHorizontal() * 4);
     }
 
     @Override
@@ -102,5 +102,20 @@ public class CoalGeneratorBlock extends Block implements VirtualHeadBlock, Block
 
     public static int getLightLevel(BlockState state) {
         return state.get(Properties.LIT) ? 10 : 0;
+    }
+
+    @Override
+    public Collection<Property<?>> getWrenchableProperies() {
+        return ImmutableList.of(Properties.HORIZONTAL_FACING);
+    }
+
+    @Override
+    public Collection<Text> getTooltip() {
+        List<Text> list = new ArrayList<>();
+        list.add(HTUtils.styledTooltip("capacity", new LiteralText(HTUtils.formatEnergy(2048)).formatted(Formatting.GRAY)));
+        list.add(HTUtils.styledTooltip("energy_transfer_out",
+                new LiteralText(HTUtils.formatEnergy(256))
+                        .formatted(Formatting.GRAY)));
+        return list;
     }
 }

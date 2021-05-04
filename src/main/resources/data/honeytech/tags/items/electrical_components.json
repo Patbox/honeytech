@@ -6,6 +6,7 @@
     "honeytech:motor",
     "honeytech:fan",
     "honeytech:circuit_board",
-    "honeytech:battery"
+    "honeytech:battery",
+    "honeytech:energy_regulator"
   ]
 }

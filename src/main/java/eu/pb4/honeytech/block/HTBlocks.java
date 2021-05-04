@@ -1,16 +1,13 @@
 package eu.pb4.honeytech.block;
 
 import eu.pb4.honeytech.block.basic_machines.*;
-import eu.pb4.honeytech.block.electric.BatteryBlock;
-import eu.pb4.honeytech.block.electric.CableBlock;
-import eu.pb4.honeytech.block.electric.CoalGeneratorBlock;
+import eu.pb4.honeytech.block.electric.*;
 import eu.pb4.honeytech.block.machines_common.GrinderBlock;
 import eu.pb4.honeytech.block.machines_common.HandleBlock;
 import eu.pb4.honeytech.block.storage.ItemExtractorBlock;
 import eu.pb4.honeytech.block.storage.PipeBlock;
 import eu.pb4.honeytech.other.HTUtils;
 import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.Material;
 import net.minecraft.util.registry.Registry;
@@ -33,9 +30,17 @@ public class HTBlocks {
     public static CoalGeneratorBlock COAL_GENERATOR_MK2 = new CoalGeneratorBlock(AbstractBlock.Settings.of(Material.METAL).strength(4).luminance(CoalGeneratorBlock::getLightLevel), 3);
     public static CoalGeneratorBlock COAL_GENERATOR_MK3 = new CoalGeneratorBlock(AbstractBlock.Settings.of(Material.METAL).strength(4).luminance(CoalGeneratorBlock::getLightLevel), 6);
 
-    public static BatteryBlock SMALL_BATTERY = new BatteryBlock(AbstractBlock.Settings.of(Material.METAL).strength(4), 65536);
-    public static BatteryBlock MEDIUM_BATTERY = new BatteryBlock(AbstractBlock.Settings.of(Material.METAL).strength(4), 262144);
-    public static BatteryBlock BIG_BATTERY = new BatteryBlock(AbstractBlock.Settings.of(Material.METAL).strength(4), 1048576);
+    public static BatteryBlock SMALL_BATTERY = new BatteryBlock(AbstractBlock.Settings.of(Material.METAL).strength(4), 65536, 1);
+    public static BatteryBlock MEDIUM_BATTERY = new BatteryBlock(AbstractBlock.Settings.of(Material.METAL).strength(4), 262144, 2);
+    public static BatteryBlock BIG_BATTERY = new BatteryBlock(AbstractBlock.Settings.of(Material.METAL).strength(4), 1048576, 3);
+
+    public static ElectricGrinderBlock ELECTRIC_GRINDER_MK1 = new ElectricGrinderBlock(AbstractBlock.Settings.of(Material.METAL).strength(5), 2);
+    public static ElectricGrinderBlock ELECTRIC_GRINDER_MK2 = new ElectricGrinderBlock(AbstractBlock.Settings.of(Material.METAL).strength(5), 2);
+    public static ElectricGrinderBlock ELECTRIC_GRINDER_MK3 = new ElectricGrinderBlock(AbstractBlock.Settings.of(Material.METAL).strength(5), 2);
+
+    public static ElectricFurnaceBlock ELECTRIC_FURNACE_MK1 = new ElectricFurnaceBlock(AbstractBlock.Settings.of(Material.METAL).strength(5), 1);
+    public static ElectricFurnaceBlock ELECTRIC_FURNACE_MK2 = new ElectricFurnaceBlock(AbstractBlock.Settings.of(Material.METAL).strength(5), 2);
+    public static ElectricFurnaceBlock ELECTRIC_FURNACE_MK3 = new ElectricFurnaceBlock(AbstractBlock.Settings.of(Material.METAL).strength(5), 5);
 
     public static void register() {
         Registry.register(Registry.BLOCK, HTUtils.id("basic_grinder"), BASIC_GRINDER);
@@ -59,6 +64,15 @@ public class HTBlocks {
         Registry.register(Registry.BLOCK, HTUtils.id("small_battery"), SMALL_BATTERY);
         Registry.register(Registry.BLOCK, HTUtils.id("medium_battery"), MEDIUM_BATTERY);
         Registry.register(Registry.BLOCK, HTUtils.id("big_battery"), BIG_BATTERY);
+
+        Registry.register(Registry.BLOCK, HTUtils.id("electric_grinder_mk1"), ELECTRIC_GRINDER_MK1);
+        Registry.register(Registry.BLOCK, HTUtils.id("electric_grinder_mk2"), ELECTRIC_GRINDER_MK2);
+        Registry.register(Registry.BLOCK, HTUtils.id("electric_grinder_mk3"), ELECTRIC_GRINDER_MK3);
+
+
+        Registry.register(Registry.BLOCK, HTUtils.id("electric_furnace_mk1"), ELECTRIC_FURNACE_MK1);
+        Registry.register(Registry.BLOCK, HTUtils.id("electric_furnace_mk2"), ELECTRIC_FURNACE_MK2);
+        Registry.register(Registry.BLOCK, HTUtils.id("electric_furnace_mk3"), ELECTRIC_FURNACE_MK3);
 
     }
 }

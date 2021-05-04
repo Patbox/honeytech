@@ -1,11 +1,18 @@
 package eu.pb4.honeytech.item.general;
 
+import eu.pb4.honeytech.block.BlockWithItemTooltip;
 import eu.pb4.polymer.item.VirtualItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.Enchantments;
-import net.minecraft.item.*;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
+
+import java.util.List;
 
 
 public class GlowingBlockItem extends BlockItem implements VirtualItem {
@@ -29,5 +36,14 @@ public class GlowingBlockItem extends BlockItem implements VirtualItem {
         ItemStack out = VirtualItem.super.getVirtualItemStack(itemStack, player);
         out.addEnchantment(Enchantments.INFINITY, 0);
         return out;
+    }
+
+    @Override
+    public void addTextToTooltip(List<Text> tooltip, ItemStack stack, ServerPlayerEntity player) {
+        if (this.getBlock() instanceof BlockWithItemTooltip) {
+            for (Text text : ((BlockWithItemTooltip) this.getBlock()).getTooltip()) {
+                tooltip.add(text);
+            }
+        }
     }
 }

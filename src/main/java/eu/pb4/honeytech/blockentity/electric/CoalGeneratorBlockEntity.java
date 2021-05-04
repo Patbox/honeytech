@@ -9,11 +9,9 @@ import eu.pb4.honeytech.other.ImplementedInventory;
 import eu.pb4.polymer.interfaces.VirtualObject;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
-import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.fabricmc.fabric.impl.content.registry.FuelRegistryImpl;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.LockableContainerBlockEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
@@ -26,7 +24,6 @@ import net.minecraft.network.packet.s2c.play.ScreenHandlerPropertyUpdateS2CPacke
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.screen.slot.FurnaceFuelSlot;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -86,7 +83,7 @@ public class CoalGeneratorBlockEntity extends LockableContainerBlockEntity imple
         if (this.cooldown > 0 && !this.isFullEnergy()) {
             this.cooldown--;
             this.isPaused = false;
-            this.energy += 2 * ((CoalGeneratorBlock) this.getCachedState().getBlock()).multiplier;
+            this.energy += 8 * ((CoalGeneratorBlock) this.getCachedState().getBlock()).multiplier;
         } else {
             this.isPaused = true;
         }
@@ -218,7 +215,7 @@ public class CoalGeneratorBlockEntity extends LockableContainerBlockEntity imple
     public static class Gui extends SimpleGui {
         private static final Style BATTERY_STYLE = Style.EMPTY.withItalic(false).withColor(Formatting.GRAY);
         private final CoalGeneratorBlockEntity blockEntity;
-        private double energyLast = -1;
+        private final double energyLast = -1;
         private int lastCooldown = -1;
         private boolean wasPaused = false;
 

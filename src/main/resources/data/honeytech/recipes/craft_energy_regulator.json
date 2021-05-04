@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "energy_regulator",
+  "pattern": [
+    "RIR",
+    "IAI",
+    "CIC"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "C": {
+      "item": "honeytech:copper_wire"
+    },
+    "A": {
+      "item": "honeytech:aluminium_ingot"
+    }
+  },
+  "result": {
+    "item": "honeytech:energy_regulator"
+  }
+}

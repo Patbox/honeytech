@@ -100,7 +100,7 @@ public class GuideGui extends SimpleGui {
                 ).build(ELECTRICAL_COMPONENTS));
 
         MAIN_GUIDE.items.add(
-                ((GuideElementBuilder) (new GuideElementBuilder(HTItems.COAL_GENERATOR_MK1)
+                ((GuideElementBuilder) (new GuideElementBuilder(HTItems.GUIDE_ITEM_ELECTRONICS)
                         .setName(HTUtils.getText("gui", "guide/electricity/name").setStyle(STYLE))
                         .addLoreLine(HTUtils.getText("gui", "guide/electricity/description").setStyle(LORE_STYLE))
                         .addLoreLine(HTUtils.getText("gui", "guide/item_count", ELECTRICITY.items.size()).setStyle(IC_STYLE)))

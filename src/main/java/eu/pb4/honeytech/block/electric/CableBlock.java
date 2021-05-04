@@ -8,13 +8,10 @@ import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.Properties;
-import net.minecraft.state.property.Property;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
@@ -47,7 +44,7 @@ public class CableBlock extends Block implements VirtualBlock, BlockEntityProvid
 
     @Override
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState newState, WorldAccess world, BlockPos pos, BlockPos posFrom) {
-        return state.with(this.propertyFromDir(direction), newState.getBlock() != Blocks.AIR);
+        return state.with(this.propertyFromDir(direction), newState.getBlock() != Blocks.AIR && world.getBlockEntity(posFrom) instanceof EnergyHolder);
     }
 
     private BooleanProperty propertyFromDir(Direction dir) {

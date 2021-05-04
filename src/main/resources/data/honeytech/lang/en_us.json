@@ -14,6 +14,12 @@
   "block.honeytech.small_battery": "Small Battery",
   "block.honeytech.medium_battery": "Medium Battery",
   "block.honeytech.big_battery": "Big Battery",
+  "block.honeytech.electric_grinder_mk1": "Electric Grinder I",
+  "block.honeytech.electric_grinder_mk2": "Electric Grinder II",
+  "block.honeytech.electric_grinder_mk3": "Electric Grinder III",
+  "block.honeytech.electric_furnace_mk1": "Electric Furnace I",
+  "block.honeytech.electric_furnace_mk2": "Electric Furnace II",
+  "block.honeytech.electric_furnace_mk3": "Electric Furnace III",
 
   "item.honeytech.guide_book": "HoneyTech Guide Book",
   "item.honeytech.portable_crafting": "Portable Crafting",
@@ -37,8 +43,9 @@
   "item.honeytech.fan": "Fan",
   "item.honeytech.circuit_board": "Circuit Board",
   "item.honeytech.battery": "Battery",
+  "item.honeytech.energy_regulator": "Energy Regulator",
 
-  "gui.honeytech.showRecipes": "Show Recipes",
+  "gui.honeytech.show_recipes": "Show Recipes",
   "gui.grinder.recipes": "Grinder Recipes",
   "gui.honeytech.table_saw.recipes": "Table Saw Recipes",
   "gui.honeytech.guide.main.name": "HoneyTech Guide Book",
@@ -73,6 +80,12 @@
   "gui.honeytech.trashcan": "Trash Can",
 
   "gui.honeytech.battery_charge": "%s / %s (%s)",
+
+  "tooltip.honeytech.capacity": "Capacity: %s",
+  "tooltip.honeytech.energy_transfer_in": "Max energy input: %s",
+  "tooltip.honeytech.energy_transfer_out": "Max energy output: %s",
+  "tooltip.honeytech.energy_consumption": "Power consumption: %s",
+
 
   "advancements.honeytech.root.title": "HoneyTech",
   "advancements.honeytech.root.description": "Technological revolution has begun..."

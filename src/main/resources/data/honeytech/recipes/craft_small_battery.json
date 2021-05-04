@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "batteries",
+  "pattern": [
+    "SBC",
+    "SES",
+    "CBS"
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:blackstone"
+    },
+    "E": {
+      "item": "honeytech:energy_regulator"
+    },
+    "C": {
+      "item": "honeytech:copper_wire"
+    },
+    "B": {
+      "item": "honeytech:battery"
+    }
+  },
+  "result": {
+    "item": "honeytech:small_battery"
+  }
+}

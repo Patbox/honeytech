@@ -1,14 +1,15 @@
 package eu.pb4.honeytech.blockentity.machines_common;
 
-import eu.pb4.honeytech.block.HTBlocks;
+import eu.pb4.honeytech.block.machines_common.GrinderBlock;
+import eu.pb4.honeytech.blockentity.EnergyHolder;
 import eu.pb4.honeytech.blockentity.HTBlockEntities;
 import eu.pb4.honeytech.blockentity.HandlePoweredBlockEntity;
-import eu.pb4.honeytech.block.machines_common.GrinderBlock;
+import eu.pb4.honeytech.item.HTItems;
 import eu.pb4.honeytech.mixin.BlockSoundGroupAccessor;
 import eu.pb4.honeytech.other.HTUtils;
-import eu.pb4.honeytech.other.RecipeBooks;
 import eu.pb4.honeytech.other.ImplementedInventory;
 import eu.pb4.honeytech.other.OutputSlot;
+import eu.pb4.honeytech.other.RecipeBooks;
 import eu.pb4.honeytech.recipe_types.GrinderRecipe;
 import eu.pb4.polymer.interfaces.VirtualObject;
 import eu.pb4.sgui.api.ClickType;
@@ -16,7 +17,8 @@ import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.*;
+import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.block.entity.LockableContainerBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
@@ -39,13 +41,16 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -60,7 +65,11 @@ public class GrinderBlockEntity extends LockableContainerBlockEntity implements 
     private int click = 0;
 
     public GrinderBlockEntity() {
-        super(HTBlockEntities.GRINDER);
+        this(HTBlockEntities.GRINDER);
+    }
+
+    public GrinderBlockEntity(BlockEntityType<?> blockEntityType) {
+        super(blockEntityType);
         this.input = ImplementedInventory.ofSize(9);
         this.output = ImplementedInventory.ofSize(9);
     }
@@ -122,7 +131,7 @@ public class GrinderBlockEntity extends LockableContainerBlockEntity implements 
 
     @Override
     public int[] getAvailableSlots(Direction side) {
-        return new int[]{9, 10, 11, 12, 13, 14, 15, 16, 17};
+        return new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};
     }
 
     @Override
@@ -239,6 +248,9 @@ public class GrinderBlockEntity extends LockableContainerBlockEntity implements 
     public static class GrinderGui extends SimpleGui {
         private final GrinderBlockEntity blockEntity;
         private final int grinderPower;
+        private final double energyLast = -1;
+        private static final Style BATTERY_STYLE = Style.EMPTY.withItalic(false).withColor(Formatting.GRAY);
+
 
         public GrinderGui(GrinderBlockEntity blockEntity, ServerPlayerEntity player) {
             super(ScreenHandlerType.GENERIC_9X3, player, false);
@@ -280,8 +292,28 @@ public class GrinderBlockEntity extends LockableContainerBlockEntity implements 
                                     RecipeBooks.openGrinderRecipeBook(player, this.grinderPower, () -> blockEntity.openInventory(player));
                                 }));
 
+                if (this.blockEntity instanceof EnergyHolder) {
+                    this.setSlot(13, new GuiElementBuilder(HTItems.BATTERY).setName(HTUtils.getText("gui", "battery_charge",
+                            new LiteralText(HTUtils.formatEnergy(((EnergyHolder) this.blockEntity).getEnergyAmount())).formatted(Formatting.WHITE),
+                            new LiteralText(HTUtils.formatEnergy(((EnergyHolder) this.blockEntity).getMaxEnergyCapacity())).formatted(Formatting.WHITE),
+                            new LiteralText(HTUtils.dtt(((EnergyHolder) this.blockEntity).getEnergyAmount() / ((EnergyHolder) this.blockEntity).getMaxEnergyCapacity() * 100) + "%").formatted(Formatting.WHITE)
+                    ).setStyle(BATTERY_STYLE)));
+                }
             }
             super.onUpdate(firstUpdate);
+        }
+
+        @Override
+        public void onTick() {
+            if (this.blockEntity instanceof EnergyHolder && !MathHelper.approximatelyEquals(((EnergyHolder) this.blockEntity).getEnergyAmount(), this.energyLast)) {
+                this.getSlot(13).getItemStack().setCustomName(HTUtils.getText("gui", "battery_charge",
+                        new LiteralText(HTUtils.formatEnergy(((EnergyHolder) this.blockEntity).getEnergyAmount())).formatted(Formatting.WHITE),
+                        new LiteralText(HTUtils.formatEnergy(((EnergyHolder) this.blockEntity).getMaxEnergyCapacity())).formatted(Formatting.WHITE),
+                        new LiteralText(HTUtils.dtt(((EnergyHolder) this.blockEntity).getEnergyAmount() / ((EnergyHolder) this.blockEntity).getMaxEnergyCapacity() * 100) + "%").formatted(Formatting.WHITE)
+                ).setStyle(BATTERY_STYLE));
+            }
+
+            super.onTick();
         }
 
         @Override

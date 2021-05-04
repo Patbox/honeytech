@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "batteries",
+  "pattern": [
+    "IBI",
+    "BEB",
+    "IBI"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:gold_block"
+    },
+    "E": {
+      "item": "honeytech:energy_regulator"
+    },
+    "B": {
+      "item": "honeytech:medium_battery"
+    }
+  },
+  "result": {
+    "item": "honeytech:big_battery"
+  }
+}

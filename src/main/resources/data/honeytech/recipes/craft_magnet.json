@@ -2,19 +2,19 @@
   "type": "minecraft:crafting_shaped",
   "group": "magnet",
   "pattern": [
-    "R L",
     "I I",
-    "III"
+    "R L",
+    "RIL"
   ],
   "key": {
     "I": {
       "item": "minecraft:iron_ingot"
     },
     "R": {
-      "item": "minecraft:redstone"
+      "item": "minecraft:redstone_block"
     },
     "L": {
-      "item": "minecraft:lapis_lazuli"
+      "item": "minecraft:lapis_block"
     }
   },
   "result": {

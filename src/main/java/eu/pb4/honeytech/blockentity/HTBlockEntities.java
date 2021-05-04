@@ -1,11 +1,9 @@
 package eu.pb4.honeytech.blockentity;
 
 import eu.pb4.honeytech.block.HTBlocks;
-import eu.pb4.honeytech.blockentity.electric.BatteryBlockEntity;
-import eu.pb4.honeytech.blockentity.electric.CableBlockEntity;
 import eu.pb4.honeytech.blockentity.basic_machines.EnchancedFurnaceBlockEntity;
 import eu.pb4.honeytech.blockentity.basic_machines.TrashCanBlockEntity;
-import eu.pb4.honeytech.blockentity.electric.CoalGeneratorBlockEntity;
+import eu.pb4.honeytech.blockentity.electric.*;
 import eu.pb4.honeytech.blockentity.machines_common.GrinderBlockEntity;
 import eu.pb4.honeytech.blockentity.machines_common.OreWasherBlockEntity;
 import eu.pb4.honeytech.blockentity.storage.ItemExtractorBlockEntity;
@@ -23,6 +21,8 @@ public class HTBlockEntities {
     public static BlockEntityType<CableBlockEntity> CABLE;
     public static BlockEntityType<CoalGeneratorBlockEntity> COAL_GENERATOR;
     public static BlockEntityType<BatteryBlockEntity> BATTERY;
+    public static BlockEntityType<ElectricGrinderBlockEntity> ELECTRIC_GRINDER;
+    public static BlockEntityType<ElectricFurnaceBlockEntity> ELECTRIC_FURNACE;
 
 
     public static void register() {
@@ -35,5 +35,9 @@ public class HTBlockEntities {
         CABLE = Registry.register(Registry.BLOCK_ENTITY_TYPE, "honeytech:cable", BlockEntityType.Builder.create(CableBlockEntity::new, HTBlocks.CABLE).build(null));
         COAL_GENERATOR = Registry.register(Registry.BLOCK_ENTITY_TYPE, "honeytech:coal_generator", BlockEntityType.Builder.create(CoalGeneratorBlockEntity::new, HTBlocks.COAL_GENERATOR_MK1, HTBlocks.COAL_GENERATOR_MK2, HTBlocks.COAL_GENERATOR_MK3).build(null));
         BATTERY = Registry.register(Registry.BLOCK_ENTITY_TYPE, "honeytech:battery", BlockEntityType.Builder.create(BatteryBlockEntity::new, HTBlocks.SMALL_BATTERY, HTBlocks.MEDIUM_BATTERY, HTBlocks.BIG_BATTERY).build(null));
+
+        ELECTRIC_GRINDER = Registry.register(Registry.BLOCK_ENTITY_TYPE, "honeytech:electric_grinder", BlockEntityType.Builder.create(ElectricGrinderBlockEntity::new, HTBlocks.ELECTRIC_GRINDER_MK1, HTBlocks.ELECTRIC_GRINDER_MK2, HTBlocks.ELECTRIC_GRINDER_MK3).build(null));
+        ELECTRIC_FURNACE = Registry.register(Registry.BLOCK_ENTITY_TYPE, "honeytech:electric_furnace", BlockEntityType.Builder.create(ElectricFurnaceBlockEntity::new, HTBlocks.ELECTRIC_FURNACE_MK1, HTBlocks.ELECTRIC_FURNACE_MK2, HTBlocks.ELECTRIC_FURNACE_MK3).build(null));
+
     }
 }
