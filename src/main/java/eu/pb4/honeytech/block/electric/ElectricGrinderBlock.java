@@ -3,6 +3,7 @@ package eu.pb4.honeytech.block.electric;
 import eu.pb4.honeytech.block.BlockWithItemTooltip;
 import eu.pb4.honeytech.block.machines_common.GrinderBlock;
 import eu.pb4.honeytech.blockentity.electric.ElectricGrinderBlockEntity;
+import eu.pb4.honeytech.other.HTTier;
 import eu.pb4.honeytech.other.HTUtils;
 import eu.pb4.polymer.block.VirtualHeadBlock;
 import net.minecraft.block.Block;
@@ -20,8 +21,10 @@ import java.util.Collection;
 import java.util.List;
 
 public class ElectricGrinderBlock extends GrinderBlock implements VirtualHeadBlock, BlockWithItemTooltip {
-    public ElectricGrinderBlock(Settings settings, int grindingPower) {
-        super(settings, grindingPower);
+    public final HTTier tier;
+    public ElectricGrinderBlock(Settings settings, HTTier tier) {
+        super(settings, tier.level);
+        this.tier = tier;
     }
 
     @Nullable
@@ -43,12 +46,12 @@ public class ElectricGrinderBlock extends GrinderBlock implements VirtualHeadBlo
     @Override
     public Collection<Text> getTooltip() {
         List<Text> list = new ArrayList<>();
-        list.add(HTUtils.styledTooltip("capacity", new LiteralText(HTUtils.formatEnergy(2048)).formatted(Formatting.GRAY)));
+        list.add(HTUtils.styledTooltip("capacity", new LiteralText(HTUtils.formatEnergy(this.tier.energyCapacity)).formatted(Formatting.GRAY)));
         list.add(HTUtils.styledTooltip("energy_transfer_in",
-                new LiteralText(HTUtils.formatEnergy(512))
+                new LiteralText(HTUtils.formatEnergy(32 * this.tier.energyMultiplier) + "/tick")
                         .formatted(Formatting.GRAY)));
-        list.add(HTUtils.styledTooltip("energy_transfer_out",
-                new LiteralText(HTUtils.formatEnergy(512))
+        list.add(HTUtils.styledTooltip("energy_consumption",
+                new LiteralText(HTUtils.formatEnergy(16 * this.tier.energyMultiplier) + "/tick")
                         .formatted(Formatting.GRAY)));
         return list;
     }

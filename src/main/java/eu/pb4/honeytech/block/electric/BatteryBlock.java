@@ -2,6 +2,7 @@ package eu.pb4.honeytech.block.electric;
 
 import eu.pb4.honeytech.block.BlockWithItemTooltip;
 import eu.pb4.honeytech.blockentity.electric.BatteryBlockEntity;
+import eu.pb4.honeytech.other.HTTier;
 import eu.pb4.honeytech.other.HTUtils;
 import eu.pb4.polymer.block.VirtualHeadBlock;
 import net.minecraft.block.Block;
@@ -23,13 +24,11 @@ import java.util.List;
 
 public class BatteryBlock extends Block implements VirtualHeadBlock, BlockEntityProvider, BlockWithItemTooltip {
     public static IntProperty LEVEL = IntProperty.of("level", 0, 4);
-    public final int capacity;
-    private final int texture;
+    public final HTTier tier;
 
-    public BatteryBlock(Settings settings, int capacity, int texture) {
+    public BatteryBlock(Settings settings, HTTier tier) {
         super(settings);
-        this.capacity = capacity;
-        this.texture = texture;
+        this.tier = tier;
     }
 
     @Override
@@ -55,7 +54,7 @@ public class BatteryBlock extends Block implements VirtualHeadBlock, BlockEntity
 
     @Override
     public String getVirtualHeadSkin(BlockState state) {
-        if (this.texture == 1) {
+        if (this.tier.level == 1) {
             switch (state.get(LEVEL)) {
                 case 0:
                     return "ewogICJ0aW1lc3RhbXAiIDogMTYyMDA1MTA1MTQyMywKICAicHJvZmlsZUlkIiA6ICIzOTg5OGFiODFmMjU0NmQxOGIyY2ExMTE1MDRkZGU1MCIsCiAgInByb2ZpbGVOYW1lIiA6ICJNeVV1aWRJcyIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS82NDVjYTI4NTUzMTQ2Y2M4ZTEwODE4ODgzYjkwYTgwNjFlMzczZDYxMzY4MTMyODY3YzNhODdjYjA0NTZkNDgwIgogICAgfQogIH0KfQ==";
@@ -68,7 +67,7 @@ public class BatteryBlock extends Block implements VirtualHeadBlock, BlockEntity
                 case 4:
                     return "ewogICJ0aW1lc3RhbXAiIDogMTYyMDA1MTExMTM2MSwKICAicHJvZmlsZUlkIiA6ICJhMjk1ODZmYmU1ZDk0Nzk2OWZjOGQ4ZGE0NzlhNDNlZSIsCiAgInByb2ZpbGVOYW1lIiA6ICJWaWVydGVsdG9hc3RpaWUiLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTg0YzFkZDgzMzE3ZTEyY2I3ZGJmYWFmMWRjZjY0MzA3MzQ1YWQyYjA0ZmY1MjZmNjA5MDM5ODBlMWFmZjA4MSIKICAgIH0KICB9Cn0=";
             }
-        } else if (this.texture == 2) {
+        } else if (this.tier.level == 2) {
             switch (state.get(LEVEL)) {
                 case 0:
                     return "ewogICJ0aW1lc3RhbXAiIDogMTYxOTk3MDg3NzUzMCwKICAicHJvZmlsZUlkIiA6ICIyMWUzNjdkNzI1Y2Y0ZTNiYjI2OTJjNGEzMDBhNGRlYiIsCiAgInByb2ZpbGVOYW1lIiA6ICJHZXlzZXJNQyIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS84ZmM2MjI2YWZkZjkxMmIzMmFiZjYzZTBmMDE5ZjNhYzVlYWJjMDk3ZDE2MjkzMTJkN2I1ODFkMmUyOTNkMTIiLAogICAgICAibWV0YWRhdGEiIDogewogICAgICAgICJtb2RlbCIgOiAic2xpbSIKICAgICAgfQogICAgfQogIH0KfQ==";
@@ -81,7 +80,7 @@ public class BatteryBlock extends Block implements VirtualHeadBlock, BlockEntity
                 case 4:
                     return "ewogICJ0aW1lc3RhbXAiIDogMTYxOTk3MDg4NTY1NCwKICAicHJvZmlsZUlkIiA6ICJmNWQwYjFhZTQxNmU0YTE5ODEyMTRmZGQzMWU3MzA1YiIsCiAgInByb2ZpbGVOYW1lIiA6ICJDYXRjaFRoZVdhdmUxMCIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9kYWVkMDJiMjRhZmVmNTUwYzIzMjA1NTY3MGFjNzEyODA5MGFiNWNjMDMxYmEzNWE1MWRlMmVkZTc1NmQyM2FkIiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0=";
             }
-        } else if (this.texture == 3) {
+        } else if (this.tier.level == 3) {
             switch (state.get(LEVEL)) {
                 case 0:
                     return "ewogICJ0aW1lc3RhbXAiIDogMTYyMDA1MTE0MzM3MywKICAicHJvZmlsZUlkIiA6ICJlNzkzYjJjYTdhMmY0MTI2YTA5ODA5MmQ3Yzk5NDE3YiIsCiAgInByb2ZpbGVOYW1lIiA6ICJUaGVfSG9zdGVyX01hbiIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9mZjNlZWVhMDNiZTcyNjJjMzA5MmZjYmM5ZTc3NDYyY2Y0NzA0OTg1OGY5ZjRkZjQ3Yjk4NTMxN2NkMjQ3MGQ3IgogICAgfQogIH0KfQ==";
@@ -102,12 +101,12 @@ public class BatteryBlock extends Block implements VirtualHeadBlock, BlockEntity
     @Override
     public Collection<Text> getTooltip() {
         List<Text> list = new ArrayList<>();
-        list.add(HTUtils.styledTooltip("capacity", new LiteralText(HTUtils.formatEnergy(this.capacity)).formatted(Formatting.GRAY)));
+        list.add(HTUtils.styledTooltip("capacity", new LiteralText(HTUtils.formatEnergy(this.tier.energyCapacity * 16)).formatted(Formatting.GRAY)));
         list.add(HTUtils.styledTooltip("energy_transfer_in",
-                new LiteralText(HTUtils.formatEnergy(BatteryBlockEntity.getMaxTransfer(false)))
+                new LiteralText(HTUtils.formatEnergy(BatteryBlockEntity.getMaxTransfer(false, this.tier)) + "/tick")
                         .formatted(Formatting.GRAY)));
         list.add(HTUtils.styledTooltip("energy_transfer_out",
-                new LiteralText(HTUtils.formatEnergy(BatteryBlockEntity.getMaxTransfer(true)))
+                new LiteralText(HTUtils.formatEnergy(BatteryBlockEntity.getMaxTransfer(true, this.tier)) + "/tick")
                         .formatted(Formatting.GRAY)));
         return list;
     }

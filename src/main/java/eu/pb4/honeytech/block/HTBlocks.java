@@ -6,6 +6,7 @@ import eu.pb4.honeytech.block.machines_common.GrinderBlock;
 import eu.pb4.honeytech.block.machines_common.HandleBlock;
 import eu.pb4.honeytech.block.storage.ItemExtractorBlock;
 import eu.pb4.honeytech.block.storage.PipeBlock;
+import eu.pb4.honeytech.other.HTTier;
 import eu.pb4.honeytech.other.HTUtils;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Blocks;
@@ -26,21 +27,21 @@ public class HTBlocks {
     public static TrashCanBlock TRASHCAN = new TrashCanBlock(AbstractBlock.Settings.of(Material.METAL).strength(4));
 
     public static CableBlock CABLE = new CableBlock(AbstractBlock.Settings.of(Material.METAL).strength(4));
-    public static CoalGeneratorBlock COAL_GENERATOR_MK1 = new CoalGeneratorBlock(AbstractBlock.Settings.of(Material.METAL).strength(4).luminance(CoalGeneratorBlock::getLightLevel), 1);
-    public static CoalGeneratorBlock COAL_GENERATOR_MK2 = new CoalGeneratorBlock(AbstractBlock.Settings.of(Material.METAL).strength(4).luminance(CoalGeneratorBlock::getLightLevel), 3);
-    public static CoalGeneratorBlock COAL_GENERATOR_MK3 = new CoalGeneratorBlock(AbstractBlock.Settings.of(Material.METAL).strength(4).luminance(CoalGeneratorBlock::getLightLevel), 6);
+    public static CoalGeneratorBlock COAL_GENERATOR_MK1 = new CoalGeneratorBlock(AbstractBlock.Settings.of(Material.METAL).strength(4).luminance(CoalGeneratorBlock::getLightLevel), HTTier.COPPER);
+    public static CoalGeneratorBlock COAL_GENERATOR_MK2 = new CoalGeneratorBlock(AbstractBlock.Settings.of(Material.METAL).strength(4).luminance(CoalGeneratorBlock::getLightLevel), HTTier.IRON);
+    public static CoalGeneratorBlock COAL_GENERATOR_MK3 = new CoalGeneratorBlock(AbstractBlock.Settings.of(Material.METAL).strength(4).luminance(CoalGeneratorBlock::getLightLevel), HTTier.GOLD);
 
-    public static BatteryBlock SMALL_BATTERY = new BatteryBlock(AbstractBlock.Settings.of(Material.METAL).strength(4), 65536, 1);
-    public static BatteryBlock MEDIUM_BATTERY = new BatteryBlock(AbstractBlock.Settings.of(Material.METAL).strength(4), 262144, 2);
-    public static BatteryBlock BIG_BATTERY = new BatteryBlock(AbstractBlock.Settings.of(Material.METAL).strength(4), 1048576, 3);
+    public static BatteryBlock SMALL_BATTERY = new BatteryBlock(AbstractBlock.Settings.of(Material.METAL).strength(4), HTTier.COPPER);
+    public static BatteryBlock MEDIUM_BATTERY = new BatteryBlock(AbstractBlock.Settings.of(Material.METAL).strength(4), HTTier.IRON);
+    public static BatteryBlock BIG_BATTERY = new BatteryBlock(AbstractBlock.Settings.of(Material.METAL).strength(4), HTTier.GOLD);
 
-    public static ElectricGrinderBlock ELECTRIC_GRINDER_MK1 = new ElectricGrinderBlock(AbstractBlock.Settings.of(Material.METAL).strength(5), 2);
-    public static ElectricGrinderBlock ELECTRIC_GRINDER_MK2 = new ElectricGrinderBlock(AbstractBlock.Settings.of(Material.METAL).strength(5), 2);
-    public static ElectricGrinderBlock ELECTRIC_GRINDER_MK3 = new ElectricGrinderBlock(AbstractBlock.Settings.of(Material.METAL).strength(5), 2);
+    public static ElectricGrinderBlock ELECTRIC_GRINDER_MK1 = new ElectricGrinderBlock(AbstractBlock.Settings.of(Material.METAL).strength(5), HTTier.COPPER);
+    public static ElectricGrinderBlock ELECTRIC_GRINDER_MK2 = new ElectricGrinderBlock(AbstractBlock.Settings.of(Material.METAL).strength(5), HTTier.IRON);
+    public static ElectricGrinderBlock ELECTRIC_GRINDER_MK3 = new ElectricGrinderBlock(AbstractBlock.Settings.of(Material.METAL).strength(5), HTTier.GOLD);
 
-    public static ElectricFurnaceBlock ELECTRIC_FURNACE_MK1 = new ElectricFurnaceBlock(AbstractBlock.Settings.of(Material.METAL).strength(5), 1);
-    public static ElectricFurnaceBlock ELECTRIC_FURNACE_MK2 = new ElectricFurnaceBlock(AbstractBlock.Settings.of(Material.METAL).strength(5), 2);
-    public static ElectricFurnaceBlock ELECTRIC_FURNACE_MK3 = new ElectricFurnaceBlock(AbstractBlock.Settings.of(Material.METAL).strength(5), 5);
+    public static ElectricFurnaceBlock ELECTRIC_FURNACE_MK1 = new ElectricFurnaceBlock(AbstractBlock.Settings.of(Material.METAL).strength(5), HTTier.COPPER);
+    public static ElectricFurnaceBlock ELECTRIC_FURNACE_MK2 = new ElectricFurnaceBlock(AbstractBlock.Settings.of(Material.METAL).strength(5), HTTier.IRON);
+    public static ElectricFurnaceBlock ELECTRIC_FURNACE_MK3 = new ElectricFurnaceBlock(AbstractBlock.Settings.of(Material.METAL).strength(5), HTTier.GOLD);
 
     public static void register() {
         Registry.register(Registry.BLOCK, HTUtils.id("basic_grinder"), BASIC_GRINDER);

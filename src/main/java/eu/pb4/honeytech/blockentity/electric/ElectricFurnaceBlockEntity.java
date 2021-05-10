@@ -135,12 +135,14 @@ public class ElectricFurnaceBlockEntity extends LockableContainerBlockEntity imp
                 Optional<?> recipe = this.world.getRecipeManager().get(this.recipeId);
                 if (recipe.isPresent()) {
                     this.currentRecipe = (SmeltingRecipe) recipe.get();
+                    this.cookTimeTotal = this.currentRecipe.getCookTime();
                 }
                 this.recipeId = null;
             }
+            int reqEnergy = (int) (((ElectricFurnaceBlock) this.getCachedState().getBlock()).tier.energyMultiplier * 8);
 
             if (this.getItems().get(0).isEmpty()
-                    || this.energy < 8
+                    || this.energy < reqEnergy
                     || (this.currentRecipe != null && !this.canAcceptRecipeOutput(this.currentRecipe))) {
                 this.cookTime = MathHelper.clamp(this.cookTime - 1, 0, this.cookTimeTotal);
                 return;
@@ -149,13 +151,20 @@ public class ElectricFurnaceBlockEntity extends LockableContainerBlockEntity imp
             }
 
             if (this.currentRecipe == null || !this.currentRecipe.matches(this, this.world)) {
-                this.currentRecipe = this.world.getRecipeManager().getFirstMatch(RecipeType.SMELTING, this, this.world).get();
-                this.cookTime = 0;
+                Optional<SmeltingRecipe> optional = this.world.getRecipeManager().getFirstMatch(RecipeType.SMELTING, this, this.world);
+                if (optional.isPresent()) {
+                    this.currentRecipe = optional.get();
+                    this.cookTime = 0;
+                    this.cookTimeTotal = this.currentRecipe.getCookTime();
+                } else {
+                    this.cookTime = MathHelper.clamp(this.cookTime - 1, 0, this.cookTimeTotal);
+                }
                 return;
             }
             if (this.canAcceptRecipeOutput(this.currentRecipe)) {
-                this.cookTime += ((ElectricFurnaceBlock) this.getCachedState().getBlock()).speedMulti;
-                this.energy -= 8;
+                this.cookTime += (int) ((ElectricFurnaceBlock) this.getCachedState().getBlock()).tier.speed;
+
+                this.energy -= reqEnergy;
                 if (this.cookTime >= this.cookTimeTotal) {
                     this.items.get(0).decrement(1);
                     ItemStack stack = this.items.get(1);

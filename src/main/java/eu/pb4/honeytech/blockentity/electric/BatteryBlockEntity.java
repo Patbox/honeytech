@@ -3,6 +3,7 @@ package eu.pb4.honeytech.blockentity.electric;
 import eu.pb4.honeytech.block.electric.BatteryBlock;
 import eu.pb4.honeytech.blockentity.EnergyHolder;
 import eu.pb4.honeytech.blockentity.HTBlockEntities;
+import eu.pb4.honeytech.other.HTTier;
 import eu.pb4.polymer.interfaces.VirtualObject;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -97,15 +98,15 @@ public class BatteryBlockEntity extends BlockEntity implements Tickable, EnergyH
 
     @Override
     public double getMaxEnergyCapacity() {
-        return ((BatteryBlock) this.getCachedState().getBlock()).capacity;
+        return ((BatteryBlock) this.getCachedState().getBlock()).tier.energyCapacity * 16;
     }
 
     @Override
     public double getMaxEnergyTransferCapacity(Direction dir, boolean isDraining) {
-        return getMaxTransfer(isDraining);
+        return getMaxTransfer(isDraining, ((BatteryBlock) this.getCachedState().getBlock()).tier);
     }
 
-    public static double getMaxTransfer(boolean isDraining) {
-        return isDraining ? 256 : 64;
+    public static double getMaxTransfer(boolean isDraining, HTTier tier) {
+        return isDraining ? 256 * tier.speed : 64 * tier.speed;
     }
 }

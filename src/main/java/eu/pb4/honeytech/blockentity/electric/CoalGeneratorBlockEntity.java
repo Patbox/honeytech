@@ -53,7 +53,6 @@ public class CoalGeneratorBlockEntity extends LockableContainerBlockEntity imple
     public int maxCooldown = 0;
     public boolean isPaused = false;
     private double energy = 0;
-    private final int ticker = 0;
     private final DefaultedList<ItemStack> items = DefaultedList.ofSize(2, ItemStack.EMPTY);
 
     public CoalGeneratorBlockEntity() {
@@ -83,7 +82,7 @@ public class CoalGeneratorBlockEntity extends LockableContainerBlockEntity imple
         if (this.cooldown > 0 && !this.isFullEnergy()) {
             this.cooldown--;
             this.isPaused = false;
-            this.energy += 8 * ((CoalGeneratorBlock) this.getCachedState().getBlock()).multiplier;
+            this.energy += 16 * ((CoalGeneratorBlock) this.getCachedState().getBlock()).tier.energyMultiplier;
         } else {
             this.isPaused = true;
         }
@@ -92,7 +91,7 @@ public class CoalGeneratorBlockEntity extends LockableContainerBlockEntity imple
             ItemStack stack = this.removeStack(slot, 1);
 
             if (stack.getCount() > 0) {
-                this.maxCooldown = fuels.get(stack.getItem()).intValue() / ((CoalGeneratorBlock) this.getCachedState().getBlock()).multiplier;
+                this.maxCooldown = (int) (fuels.get(stack.getItem()).intValue() / ((CoalGeneratorBlock) this.getCachedState().getBlock()).tier.energyMultiplier);
                 this.cooldown = this.maxCooldown;
                 this.isGenerating = true;
                 if (!this.getCachedState().get(Properties.LIT)) {
@@ -195,12 +194,12 @@ public class CoalGeneratorBlockEntity extends LockableContainerBlockEntity imple
 
     @Override
     public double getMaxEnergyCapacity() {
-        return 2048;
+        return ((CoalGeneratorBlock) this.getCachedState().getBlock()).tier.energyCapacity;
     }
 
     @Override
     public double getMaxEnergyTransferCapacity(Direction dir, boolean isDraining) {
-        return 256;
+        return 8 * ((CoalGeneratorBlock) this.getCachedState().getBlock()).tier.energyMultiplier;
     }
 
     public void openInventory(ServerPlayerEntity player) {

@@ -1,5 +1,6 @@
 package eu.pb4.honeytech.blockentity.electric;
 
+import eu.pb4.honeytech.block.electric.ElectricGrinderBlock;
 import eu.pb4.honeytech.blockentity.EnergyHolder;
 import eu.pb4.honeytech.blockentity.HTBlockEntities;
 import eu.pb4.honeytech.blockentity.machines_common.GrinderBlockEntity;
@@ -16,7 +17,6 @@ public class ElectricGrinderBlockEntity extends GrinderBlockEntity implements En
     public ElectricGrinderBlockEntity() {
         super(HTBlockEntities.ELECTRIC_GRINDER);
     }
-
 
     @Override
     public void fromTag(BlockState state, CompoundTag tag) {
@@ -53,7 +53,7 @@ public class ElectricGrinderBlockEntity extends GrinderBlockEntity implements En
 
     @Override
     public double getMaxEnergyCapacity() {
-        return 2048;
+        return ((ElectricGrinderBlock) this.getCachedState().getBlock()).tier.energyCapacity;
     }
 
     @Override

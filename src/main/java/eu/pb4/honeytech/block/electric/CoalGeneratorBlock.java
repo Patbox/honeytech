@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import eu.pb4.honeytech.block.BlockWithItemTooltip;
 import eu.pb4.honeytech.block.WrenchableBlock;
 import eu.pb4.honeytech.blockentity.electric.CoalGeneratorBlockEntity;
+import eu.pb4.honeytech.other.HTTier;
 import eu.pb4.honeytech.other.HTUtils;
 import eu.pb4.polymer.block.VirtualHeadBlock;
 import net.minecraft.block.Block;
@@ -35,11 +36,11 @@ import java.util.Collection;
 import java.util.List;
 
 public class CoalGeneratorBlock extends Block implements VirtualHeadBlock, BlockEntityProvider, WrenchableBlock, BlockWithItemTooltip {
-    public final int multiplier;
-    public CoalGeneratorBlock(Settings settings, int multip) {
+    public final HTTier tier;
+    public CoalGeneratorBlock(Settings settings, HTTier tier) {
         super(settings);
         this.setDefaultState(this.stateManager.getDefaultState().with(Properties.LIT, false));
-        this.multiplier = multip;
+        this.tier = tier;
     }
 
     @Override
@@ -114,7 +115,7 @@ public class CoalGeneratorBlock extends Block implements VirtualHeadBlock, Block
         List<Text> list = new ArrayList<>();
         list.add(HTUtils.styledTooltip("capacity", new LiteralText(HTUtils.formatEnergy(2048)).formatted(Formatting.GRAY)));
         list.add(HTUtils.styledTooltip("energy_transfer_out",
-                new LiteralText(HTUtils.formatEnergy(256))
+                new LiteralText(HTUtils.formatEnergy(16 * this.tier.energyMultiplier) +"/tick")
                         .formatted(Formatting.GRAY)));
         return list;
     }

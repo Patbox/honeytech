@@ -1,6 +1,5 @@
 package eu.pb4.honeytech.blockentity.electric;
 
-import eu.pb4.honeytech.block.electric.CableBlock;
 import eu.pb4.honeytech.blockentity.EnergyHolder;
 import eu.pb4.honeytech.blockentity.HTBlockEntities;
 import eu.pb4.polymer.interfaces.VirtualObject;

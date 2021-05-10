@@ -33,9 +33,8 @@ dependencies {
 	// You may need to force-disable transitiveness on them.
 	modRuntime "com.github.SuperCoder7979:databreaker:0.2.6"
 
-	modImplementation include("com.github.Patbox:sgui:0.3.0")
-	//modImplementation include("eu.pb4:guilib:0.3.0")
-	modImplementation include("com.github.Patbox:polymer:0.0.1")
+	modImplementation include("eu.pb4:polymer:0.0.2")
+	modImplementation include("eu.pb4:sgui:0.3.0")
 
 }
 
