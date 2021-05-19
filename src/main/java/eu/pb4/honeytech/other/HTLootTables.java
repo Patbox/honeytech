@@ -1,15 +1,13 @@
 package eu.pb4.honeytech.other;
 
-import eu.pb4.honeytech.HoneyTechMod;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextType;
-import net.minecraft.util.Identifier;
 
 import java.util.function.Consumer;
 
 public class HTLootTables {
     public static final LootContextType ORE_WASHING_CONTEXT = registerContextType("ore_washing", (builder) -> {
-        builder.require(LootContextParameters.THIS_ENTITY).require(LootContextParameters.BLOCK_ENTITY);
+        builder.allow(LootContextParameters.THIS_ENTITY).require(LootContextParameters.BLOCK_ENTITY);
     });
 
 

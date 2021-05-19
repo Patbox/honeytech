@@ -6,9 +6,11 @@ import eu.pb4.honeytech.block.machines_common.GrinderBlock;
 import eu.pb4.honeytech.block.machines_common.HandleBlock;
 import eu.pb4.honeytech.block.storage.ItemExtractorBlock;
 import eu.pb4.honeytech.block.storage.PipeBlock;
+import eu.pb4.honeytech.other.HTDataPack;
 import eu.pb4.honeytech.other.HTTier;
 import eu.pb4.honeytech.other.HTUtils;
 import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.Material;
 import net.minecraft.util.registry.Registry;
@@ -43,37 +45,80 @@ public class HTBlocks {
     public static ElectricFurnaceBlock ELECTRIC_FURNACE_MK2 = new ElectricFurnaceBlock(AbstractBlock.Settings.of(Material.METAL).strength(5), HTTier.IRON);
     public static ElectricFurnaceBlock ELECTRIC_FURNACE_MK3 = new ElectricFurnaceBlock(AbstractBlock.Settings.of(Material.METAL).strength(5), HTTier.GOLD);
 
-    public static void register() {
-        Registry.register(Registry.BLOCK, HTUtils.id("basic_grinder"), BASIC_GRINDER);
-        Registry.register(Registry.BLOCK, HTUtils.id("basic_grinder_handle"), BASIC_GRINDER_HANDLE);
-        Registry.register(Registry.BLOCK, HTUtils.id("table_saw"), TABLE_SAW);
-        Registry.register(Registry.BLOCK, HTUtils.id("basic_ore_washer"), BASIC_ORE_WASHER);
-        Registry.register(Registry.BLOCK, HTUtils.id("basic_ore_washer_handle"), BASIC_ORE_WASHER_HANDLE);
+    public static ElectricOreWasherBlock ELECTRIC_ORE_WASHER_MK1 = new ElectricOreWasherBlock(AbstractBlock.Settings.of(Material.METAL).strength(5), HTTier.COPPER);
+    public static ElectricOreWasherBlock ELECTRIC_ORE_WASHER_MK2 = new ElectricOreWasherBlock(AbstractBlock.Settings.of(Material.METAL).strength(5), HTTier.IRON);
+    public static ElectricOreWasherBlock ELECTRIC_ORE_WASHER_MK3 = new ElectricOreWasherBlock(AbstractBlock.Settings.of(Material.METAL).strength(5), HTTier.GOLD);
 
-        Registry.register(Registry.BLOCK, HTUtils.id("pipe"), PIPE);
-        Registry.register(Registry.BLOCK, HTUtils.id("item_extractor"), ITEM_EXTRACTOR);
+    public static AutoCrafterBlock AUTO_CRAFTER = new AutoCrafterBlock(AbstractBlock.Settings.of(Material.METAL).strength(5));
 
-        Registry.register(Registry.BLOCK, HTUtils.id("enchanced_furnace"), ENCHANCED_FURNACE);
+    public static void createBlocks() {
+        register("basic_grinder", BASIC_GRINDER);
+        register("basic_grinder_handle", BASIC_GRINDER_HANDLE);
+        register("table_saw", TABLE_SAW);
+        register("basic_ore_washer", BASIC_ORE_WASHER);
+        register("basic_ore_washer_handle", BASIC_ORE_WASHER_HANDLE);
 
-        Registry.register(Registry.BLOCK, HTUtils.id("trashcan"), TRASHCAN);
+        register("pipe", PIPE);
+        register("item_extractor", ITEM_EXTRACTOR);
 
-        Registry.register(Registry.BLOCK, HTUtils.id("cable"), CABLE);
-        Registry.register(Registry.BLOCK, HTUtils.id("coal_generator_mk1"), COAL_GENERATOR_MK1);
-        Registry.register(Registry.BLOCK, HTUtils.id("coal_generator_mk2"), COAL_GENERATOR_MK2);
-        Registry.register(Registry.BLOCK, HTUtils.id("coal_generator_mk3"), COAL_GENERATOR_MK3);
+        register("enchanced_furnace", ENCHANCED_FURNACE);
 
-        Registry.register(Registry.BLOCK, HTUtils.id("small_battery"), SMALL_BATTERY);
-        Registry.register(Registry.BLOCK, HTUtils.id("medium_battery"), MEDIUM_BATTERY);
-        Registry.register(Registry.BLOCK, HTUtils.id("big_battery"), BIG_BATTERY);
+        register("trashcan", TRASHCAN);
 
-        Registry.register(Registry.BLOCK, HTUtils.id("electric_grinder_mk1"), ELECTRIC_GRINDER_MK1);
-        Registry.register(Registry.BLOCK, HTUtils.id("electric_grinder_mk2"), ELECTRIC_GRINDER_MK2);
-        Registry.register(Registry.BLOCK, HTUtils.id("electric_grinder_mk3"), ELECTRIC_GRINDER_MK3);
+        register("cable", CABLE);
+        register("coal_generator_mk1", COAL_GENERATOR_MK1);
+        register("coal_generator_mk2", COAL_GENERATOR_MK2);
+        register("coal_generator_mk3", COAL_GENERATOR_MK3);
+
+        register("small_battery", SMALL_BATTERY);
+        register("medium_battery", MEDIUM_BATTERY);
+        register("big_battery", BIG_BATTERY);
+
+        register("electric_grinder_mk1", ELECTRIC_GRINDER_MK1);
+        register("electric_grinder_mk2", ELECTRIC_GRINDER_MK2);
+        register("electric_grinder_mk3", ELECTRIC_GRINDER_MK3);
+
+        register("electric_furnace_mk1", ELECTRIC_FURNACE_MK1);
+        register("electric_furnace_mk2", ELECTRIC_FURNACE_MK2);
+        register("electric_furnace_mk3", ELECTRIC_FURNACE_MK3);
+
+        register("electric_ore_washer_mk1", ELECTRIC_ORE_WASHER_MK1);
+        register("electric_ore_washer_mk2", ELECTRIC_ORE_WASHER_MK2);
+        register("electric_ore_washer_mk3", ELECTRIC_ORE_WASHER_MK3);
+
+        register("auto_crafter", AUTO_CRAFTER);
+
+    }
+
+    public static void createRecipes() {
+        HTDataPack.createSimpleDrop(BASIC_GRINDER);
+        HTDataPack.createSimpleDrop(BASIC_ORE_WASHER);
+        HTDataPack.createSimpleDrop(TABLE_SAW);
+        HTDataPack.createSimpleDrop(PIPE);
+        HTDataPack.createSimpleDrop(ITEM_EXTRACTOR);
+        HTDataPack.createSimpleDrop(ENCHANCED_FURNACE);
+        HTDataPack.createSimpleDrop(TRASHCAN);
+        HTDataPack.createSimpleDrop(CABLE);
+        HTDataPack.createSimpleDrop(COAL_GENERATOR_MK1);
+        HTDataPack.createSimpleDrop(COAL_GENERATOR_MK2);
+        HTDataPack.createSimpleDrop(COAL_GENERATOR_MK3);
+        HTDataPack.createSimpleDrop(SMALL_BATTERY);
+        HTDataPack.createSimpleDrop(MEDIUM_BATTERY);
+        HTDataPack.createSimpleDrop(BIG_BATTERY);
+        HTDataPack.createSimpleDrop(ELECTRIC_GRINDER_MK1);
+        HTDataPack.createSimpleDrop(ELECTRIC_GRINDER_MK2);
+        HTDataPack.createSimpleDrop(ELECTRIC_GRINDER_MK3);
+        HTDataPack.createSimpleDrop(ELECTRIC_FURNACE_MK1);
+        HTDataPack.createSimpleDrop(ELECTRIC_FURNACE_MK2);
+        HTDataPack.createSimpleDrop(ELECTRIC_FURNACE_MK3);
+        HTDataPack.createSimpleDrop(ELECTRIC_ORE_WASHER_MK1);
+        HTDataPack.createSimpleDrop(ELECTRIC_ORE_WASHER_MK2);
+        HTDataPack.createSimpleDrop(ELECTRIC_ORE_WASHER_MK3);
+        HTDataPack.createSimpleDrop(AUTO_CRAFTER);
+    }
 
 
-        Registry.register(Registry.BLOCK, HTUtils.id("electric_furnace_mk1"), ELECTRIC_FURNACE_MK1);
-        Registry.register(Registry.BLOCK, HTUtils.id("electric_furnace_mk2"), ELECTRIC_FURNACE_MK2);
-        Registry.register(Registry.BLOCK, HTUtils.id("electric_furnace_mk3"), ELECTRIC_FURNACE_MK3);
-
+    private static void register(String path, Block block) {
+        Registry.register(Registry.BLOCK, HTUtils.id(path), block);
     }
 }

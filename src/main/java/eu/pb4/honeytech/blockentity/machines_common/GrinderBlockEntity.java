@@ -59,10 +59,13 @@ import java.util.Optional;
 import java.util.Set;
 
 public class GrinderBlockEntity extends LockableContainerBlockEntity implements SidedInventory, HandlePoweredBlockEntity, VirtualObject {
+    private final static int[] SLOTS = new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};
+
     private final ImplementedInventory input;
     private final ImplementedInventory output;
     public final Set<GrinderGui> openGuis = new HashSet<>();
     private int click = 0;
+    private double offset = -1;
 
     public GrinderBlockEntity() {
         this(HTBlockEntities.GRINDER);
@@ -131,7 +134,7 @@ public class GrinderBlockEntity extends LockableContainerBlockEntity implements 
 
     @Override
     public int[] getAvailableSlots(Direction side) {
-        return new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};
+        return SLOTS;
     }
 
     @Override
@@ -221,9 +224,14 @@ public class GrinderBlockEntity extends LockableContainerBlockEntity implements 
                         this.input.removeStack(x, 1);
                         this.output.addStack(output);
                         this.click = 0;
+
+                        if (this.offset < 0) {
+                            this.offset = this.getCachedState().getCollisionShape(this.world, this.pos).getMax(Direction.Axis.Y);
+                        }
+
                          ((ServerWorld) world).spawnParticles(new ItemStackParticleEffect(ParticleTypes.ITEM, stack),
                                 pos.getX() + 0.5d,
-                                pos.getY() + 1d,
+                                pos.getY() + this.offset,
                                 pos.getZ() + 0.5d, 20,0.1f, 0.1f, 0.1f, 0.1f);
 
                         SoundEvent event = SoundEvents.BLOCK_STONE_BREAK;

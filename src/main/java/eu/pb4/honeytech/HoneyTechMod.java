@@ -5,6 +5,7 @@ import eu.pb4.honeytech.block.HTBlocks;
 import eu.pb4.honeytech.blockentity.HTBlockEntities;
 import eu.pb4.honeytech.gui.guide.GuideGui;
 import eu.pb4.honeytech.item.HTItems;
+import eu.pb4.honeytech.other.HTDataPack;
 import eu.pb4.honeytech.recipe_types.GrinderRecipe;
 import eu.pb4.honeytech.recipe_types.TableSawRecipe;
 import net.fabricmc.api.ModInitializer;
@@ -29,10 +30,14 @@ public class HoneyTechMod implements ModInitializer {
 		Registry.register(Registry.RECIPE_TYPE, new Identifier(ID, GrinderRecipe.Type.ID), GrinderRecipe.Type.INSTANCE);
 		Registry.register(Registry.RECIPE_TYPE, new Identifier(ID, TableSawRecipe.Type.ID), TableSawRecipe.Type.INSTANCE);
 
-		HTBlocks.register();
+		HTBlocks.createBlocks();
+		HTItems.createItems();
 		HTBlockEntities.register();
-		HTItems.register();
 
+		HTBlocks.createRecipes();
+		HTItems.createRecipes();
+
+		HTDataPack.create();
 
 		ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, serverResourceManager, success) -> {
 			if (success) {

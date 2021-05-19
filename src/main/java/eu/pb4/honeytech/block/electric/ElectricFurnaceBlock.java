@@ -1,11 +1,10 @@
 package eu.pb4.honeytech.block.electric;
 
 import com.google.common.collect.ImmutableList;
-import eu.pb4.honeytech.block.BlockWithItemTooltip;
+import eu.pb4.honeytech.block.MachineBlock;
 import eu.pb4.honeytech.block.WrenchableBlock;
 import eu.pb4.honeytech.blockentity.electric.ElectricFurnaceBlockEntity;
 import eu.pb4.honeytech.other.HTTier;
-import eu.pb4.honeytech.other.HTUtils;
 import eu.pb4.polymer.block.VirtualHeadBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
@@ -19,10 +18,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Properties;
 import net.minecraft.state.property.Property;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
@@ -30,11 +26,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
-public class ElectricFurnaceBlock extends Block implements VirtualHeadBlock, BlockEntityProvider, BlockWithItemTooltip, WrenchableBlock {
+public class ElectricFurnaceBlock extends Block implements VirtualHeadBlock, BlockEntityProvider, MachineBlock, WrenchableBlock {
     public final HTTier tier;
 
     public ElectricFurnaceBlock(Settings settings, HTTier tier) {
@@ -101,20 +95,37 @@ public class ElectricFurnaceBlock extends Block implements VirtualHeadBlock, Blo
     }
 
     @Override
-    public Collection<Text> getTooltip() {
-        List<Text> list = new ArrayList<>();
-        list.add(HTUtils.styledTooltip("capacity", new LiteralText(HTUtils.formatEnergy(this.tier.energyCapacity)).formatted(Formatting.GRAY)));
-        list.add(HTUtils.styledTooltip("energy_transfer_in",
-                new LiteralText(HTUtils.formatEnergy(32) + "/tick")
-                        .formatted(Formatting.GRAY)));
-        list.add(HTUtils.styledTooltip("energy_consumption",
-                new LiteralText(HTUtils.formatEnergy(30) + "/tick")
-                        .formatted(Formatting.GRAY)));
-        return list;
+    public Collection<Property<?>> getWrenchableProperies() {
+        return ImmutableList.of(Properties.HORIZONTAL_FACING);
     }
 
     @Override
-    public Collection<Property<?>> getWrenchableProperies() {
-        return ImmutableList.of(Properties.HORIZONTAL_FACING);
+    public double getPerTickEnergyUsage() {
+        return 128;
+    }
+
+    @Override
+    public double getPerTickEnergyProduction() {
+        return 0;
+    }
+
+    @Override
+    public double getMaxEnergyOutput() {
+        return 0;
+    }
+
+    @Override
+    public double getMaxEnergyInput() {
+        return 256;
+    }
+
+    @Override
+    public double getCapacity() {
+        return this.tier.energyCapacity;
+    }
+
+    @Override
+    public HTTier getTier() {
+        return this.tier;
     }
 }

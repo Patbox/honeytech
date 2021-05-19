@@ -1,11 +1,10 @@
 package eu.pb4.honeytech.block.electric;
 
 import com.google.common.collect.ImmutableList;
-import eu.pb4.honeytech.block.BlockWithItemTooltip;
+import eu.pb4.honeytech.block.MachineBlock;
 import eu.pb4.honeytech.block.WrenchableBlock;
 import eu.pb4.honeytech.blockentity.electric.CoalGeneratorBlockEntity;
 import eu.pb4.honeytech.other.HTTier;
-import eu.pb4.honeytech.other.HTUtils;
 import eu.pb4.polymer.block.VirtualHeadBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
@@ -19,10 +18,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Properties;
 import net.minecraft.state.property.Property;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
@@ -31,11 +27,9 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
-public class CoalGeneratorBlock extends Block implements VirtualHeadBlock, BlockEntityProvider, WrenchableBlock, BlockWithItemTooltip {
+public class CoalGeneratorBlock extends Block implements VirtualHeadBlock, BlockEntityProvider, WrenchableBlock, MachineBlock {
     public final HTTier tier;
     public CoalGeneratorBlock(Settings settings, HTTier tier) {
         super(settings);
@@ -111,12 +105,32 @@ public class CoalGeneratorBlock extends Block implements VirtualHeadBlock, Block
     }
 
     @Override
-    public Collection<Text> getTooltip() {
-        List<Text> list = new ArrayList<>();
-        list.add(HTUtils.styledTooltip("capacity", new LiteralText(HTUtils.formatEnergy(2048)).formatted(Formatting.GRAY)));
-        list.add(HTUtils.styledTooltip("energy_transfer_out",
-                new LiteralText(HTUtils.formatEnergy(16 * this.tier.energyMultiplier) +"/tick")
-                        .formatted(Formatting.GRAY)));
-        return list;
+    public double getPerTickEnergyUsage() {
+        return 0;
+    }
+
+    @Override
+    public double getPerTickEnergyProduction() {
+        return this.tier.energyCapacity / 16;
+    }
+
+    @Override
+    public double getMaxEnergyOutput() {
+        return this.getPerTickEnergyProduction();
+    }
+
+    @Override
+    public double getMaxEnergyInput() {
+        return 0;
+    }
+
+    @Override
+    public double getCapacity() {
+        return this.tier.energyCapacity;
+    }
+
+    @Override
+    public HTTier getTier() {
+        return this.tier;
     }
 }

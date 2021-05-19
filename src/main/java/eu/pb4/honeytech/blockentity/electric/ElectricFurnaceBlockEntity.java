@@ -1,5 +1,6 @@
 package eu.pb4.honeytech.blockentity.electric;
 
+import eu.pb4.honeytech.block.MachineBlock;
 import eu.pb4.honeytech.block.electric.ElectricFurnaceBlock;
 import eu.pb4.honeytech.blockentity.EnergyHolder;
 import eu.pb4.honeytech.blockentity.HTBlockEntities;
@@ -128,58 +129,61 @@ public class ElectricFurnaceBlockEntity extends LockableContainerBlockEntity imp
 
     @Override
     public void tick() {
-        if (!this.world.isClient) {
-            EnergyHolder.takeEnergyFromSources(this, this.world, this.pos, 32);
+        if (this.world.isClient) {
+            return;
+        }
+        MachineBlock machine = (MachineBlock) this.getCachedState().getBlock();
 
-            if (this.recipeId != null) {
-                Optional<?> recipe = this.world.getRecipeManager().get(this.recipeId);
-                if (recipe.isPresent()) {
-                    this.currentRecipe = (SmeltingRecipe) recipe.get();
-                    this.cookTimeTotal = this.currentRecipe.getCookTime();
-                }
-                this.recipeId = null;
+        EnergyHolder.takeEnergyFromSources(this, this.world, this.pos, machine.getMaxEnergyInput());
+
+        if (this.recipeId != null) {
+            Optional<?> recipe = this.world.getRecipeManager().get(this.recipeId);
+            if (recipe.isPresent()) {
+                this.currentRecipe = (SmeltingRecipe) recipe.get();
+                this.cookTimeTotal = this.currentRecipe.getCookTime();
             }
-            int reqEnergy = (int) (((ElectricFurnaceBlock) this.getCachedState().getBlock()).tier.energyMultiplier * 8);
+            this.recipeId = null;
+        }
 
-            if (this.getItems().get(0).isEmpty()
-                    || this.energy < reqEnergy
-                    || (this.currentRecipe != null && !this.canAcceptRecipeOutput(this.currentRecipe))) {
+        if (this.getItems().get(0).isEmpty()
+                || this.energy < machine.getPerTickEnergyUsage()
+                || (this.currentRecipe != null && !this.canAcceptRecipeOutput(this.currentRecipe))) {
+            this.cookTime = MathHelper.clamp(this.cookTime - 1, 0, this.cookTimeTotal);
+            return;
+        } else if (this.energy == 8) {
+            return;
+        }
+
+        if (this.currentRecipe == null || !this.currentRecipe.matches(this, this.world)) {
+            Optional<SmeltingRecipe> optional = this.world.getRecipeManager().getFirstMatch(RecipeType.SMELTING, this, this.world);
+            if (optional.isPresent()) {
+                this.currentRecipe = optional.get();
+                this.cookTime = 0;
+                this.cookTimeTotal = this.currentRecipe.getCookTime();
+            } else {
                 this.cookTime = MathHelper.clamp(this.cookTime - 1, 0, this.cookTimeTotal);
-                return;
-            } else if (this.energy == 8) {
-                return;
             }
+            return;
+        }
+        if (this.canAcceptRecipeOutput(this.currentRecipe)) {
+            this.cookTime += (int) ((ElectricFurnaceBlock) this.getCachedState().getBlock()).tier.speed;
 
-            if (this.currentRecipe == null || !this.currentRecipe.matches(this, this.world)) {
-                Optional<SmeltingRecipe> optional = this.world.getRecipeManager().getFirstMatch(RecipeType.SMELTING, this, this.world);
-                if (optional.isPresent()) {
-                    this.currentRecipe = optional.get();
-                    this.cookTime = 0;
-                    this.cookTimeTotal = this.currentRecipe.getCookTime();
+            this.energy -= machine.getPerTickEnergyUsage();
+            if (this.cookTime >= this.cookTimeTotal) {
+                this.items.get(0).decrement(1);
+                ItemStack stack = this.items.get(1);
+                if (stack.isEmpty()) {
+                    this.setStack(1, currentRecipe.getOutput().copy());
                 } else {
-                    this.cookTime = MathHelper.clamp(this.cookTime - 1, 0, this.cookTimeTotal);
+                    stack.increment(1);
                 }
+                this.cookTime = 0;
+                this.cookTimeTotal = this.currentRecipe.getCookTime();
+            } else {
                 return;
-            }
-            if (this.canAcceptRecipeOutput(this.currentRecipe)) {
-                this.cookTime += (int) ((ElectricFurnaceBlock) this.getCachedState().getBlock()).tier.speed;
-
-                this.energy -= reqEnergy;
-                if (this.cookTime >= this.cookTimeTotal) {
-                    this.items.get(0).decrement(1);
-                    ItemStack stack = this.items.get(1);
-                    if (stack.isEmpty()) {
-                        this.setStack(1, currentRecipe.getOutput().copy());
-                    } else {
-                        stack.increment(1);
-                    }
-                    this.cookTime = 0;
-                    this.cookTimeTotal = this.currentRecipe.getCookTime();
-                } else {
-                    return;
-                }
             }
         }
+
     }
 
     protected boolean canAcceptRecipeOutput(@Nullable Recipe<?> recipe) {
@@ -226,12 +230,12 @@ public class ElectricFurnaceBlockEntity extends LockableContainerBlockEntity imp
 
     @Override
     public double getMaxEnergyCapacity() {
-        return 2048;
+        return ((MachineBlock) this.getCachedState().getBlock()).getCapacity();
     }
 
     @Override
     public double getMaxEnergyTransferCapacity(Direction dir, boolean isDraining) {
-        return 256;
+        return !isDraining ? ((MachineBlock) this.getCachedState().getBlock()).getMaxEnergyOutput() : 0;
     }
 
     public void openInventory(ServerPlayerEntity player) {

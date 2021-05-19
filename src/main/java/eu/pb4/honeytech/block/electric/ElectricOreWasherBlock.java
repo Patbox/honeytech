@@ -1,8 +1,8 @@
 package eu.pb4.honeytech.block.electric;
 
 import eu.pb4.honeytech.block.MachineBlock;
-import eu.pb4.honeytech.block.machines_common.GrinderBlock;
-import eu.pb4.honeytech.blockentity.electric.ElectricGrinderBlockEntity;
+import eu.pb4.honeytech.block.machines_common.OreWasherBlock;
+import eu.pb4.honeytech.blockentity.electric.ElectricOreWasherBlockEntity;
 import eu.pb4.honeytech.other.HTTier;
 import eu.pb4.polymer.block.VirtualHeadBlock;
 import net.minecraft.block.Block;
@@ -12,30 +12,28 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.world.BlockView;
 import org.jetbrains.annotations.Nullable;
 
-
-public class ElectricGrinderBlock extends GrinderBlock implements VirtualHeadBlock, MachineBlock {
+public class ElectricOreWasherBlock extends OreWasherBlock implements VirtualHeadBlock, MachineBlock {
     public final HTTier tier;
-    public ElectricGrinderBlock(Settings settings, HTTier tier) {
-        super(settings, tier.level);
+    public ElectricOreWasherBlock(Settings settings, HTTier tier) {
+        super(settings);
         this.tier = tier;
     }
 
     @Nullable
     @Override
     public BlockEntity createBlockEntity(BlockView world) {
-        return new ElectricGrinderBlockEntity();
+        return new ElectricOreWasherBlockEntity();
     }
 
     @Override
     public String getVirtualHeadSkin(BlockState state) {
-        return "ewogICJ0aW1lc3RhbXAiIDogMTYyMDA2NTA3NDY5OCwKICAicHJvZmlsZUlkIiA6ICJmMjc0YzRkNjI1MDQ0ZTQxOGVmYmYwNmM3NWIyMDIxMyIsCiAgInByb2ZpbGVOYW1lIiA6ICJIeXBpZ3NlbCIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9kZjQ0MmUxZTgxNDJlMThhNDIwZjhjNzFiYzE5ZGZiYTJjYWE5NjEyN2I0MWRhMzFkYTYwOGYyNmRhNGMyYWViIiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0=";
+        return "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWY1ZDc0NjY4YmRiNTRkMzRjNDgyNThkYjU2YTIxOGFjZGIzYjBmODMwOTZkYTY5MjIzZTZhMGMzNmM1ODZkIn19fQ==";
     }
 
     @Override
     public Block getVirtualBlock() {
         return Blocks.PLAYER_HEAD;
     }
-
 
     @Override
     public double getPerTickEnergyUsage() {

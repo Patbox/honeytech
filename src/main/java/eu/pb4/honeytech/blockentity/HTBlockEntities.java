@@ -23,6 +23,8 @@ public class HTBlockEntities {
     public static BlockEntityType<BatteryBlockEntity> BATTERY;
     public static BlockEntityType<ElectricGrinderBlockEntity> ELECTRIC_GRINDER;
     public static BlockEntityType<ElectricFurnaceBlockEntity> ELECTRIC_FURNACE;
+    public static BlockEntityType<ElectricOreWasherBlockEntity> ELECTRIC_ORE_WASHER;
+    public static BlockEntityType<AutoCrafterBlockEntity> AUTO_CRAFTER;
 
 
     public static void register() {
@@ -38,6 +40,7 @@ public class HTBlockEntities {
 
         ELECTRIC_GRINDER = Registry.register(Registry.BLOCK_ENTITY_TYPE, "honeytech:electric_grinder", BlockEntityType.Builder.create(ElectricGrinderBlockEntity::new, HTBlocks.ELECTRIC_GRINDER_MK1, HTBlocks.ELECTRIC_GRINDER_MK2, HTBlocks.ELECTRIC_GRINDER_MK3).build(null));
         ELECTRIC_FURNACE = Registry.register(Registry.BLOCK_ENTITY_TYPE, "honeytech:electric_furnace", BlockEntityType.Builder.create(ElectricFurnaceBlockEntity::new, HTBlocks.ELECTRIC_FURNACE_MK1, HTBlocks.ELECTRIC_FURNACE_MK2, HTBlocks.ELECTRIC_FURNACE_MK3).build(null));
-
+        ELECTRIC_ORE_WASHER = Registry.register(Registry.BLOCK_ENTITY_TYPE, "honeytech:electric_ore_washer", BlockEntityType.Builder.create(ElectricOreWasherBlockEntity::new, HTBlocks.ELECTRIC_ORE_WASHER_MK1, HTBlocks.ELECTRIC_ORE_WASHER_MK2, HTBlocks.ELECTRIC_ORE_WASHER_MK3).build(null));
+        AUTO_CRAFTER = Registry.register(Registry.BLOCK_ENTITY_TYPE, "honeytech:auto_crafter", BlockEntityType.Builder.create(AutoCrafterBlockEntity::new, HTBlocks.AUTO_CRAFTER).build(null));
     }
 }

@@ -13,7 +13,9 @@
     "honeytech:electric_grinder_mk3",
     "honeytech:electric_furnace_mk1",
     "honeytech:electric_furnace_mk2",
-    "honeytech:electric_furnace_mk3"
-
+    "honeytech:electric_furnace_mk3",
+    "honeytech:electric_ore_washer_mk1",
+    "honeytech:electric_ore_washer_mk2",
+    "honeytech:electric_ore_washer_mk3"
   ]
 }

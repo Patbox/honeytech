@@ -20,6 +20,9 @@
   "block.honeytech.electric_furnace_mk1": "Electric Furnace I",
   "block.honeytech.electric_furnace_mk2": "Electric Furnace II",
   "block.honeytech.electric_furnace_mk3": "Electric Furnace III",
+  "block.honeytech.electric_ore_washer_mk1": "Electric Ore Washer I",
+  "block.honeytech.electric_ore_washer_mk2": "Electric Ore Washer II",
+  "block.honeytech.electric_ore_washer_mk3": "Electric Ore Washer III",
 
   "item.honeytech.guide_book": "HoneyTech Guide Book",
   "item.honeytech.portable_crafting": "Portable Crafting",
@@ -85,6 +88,7 @@
   "tooltip.honeytech.energy_transfer_in": "Max energy input: %s",
   "tooltip.honeytech.energy_transfer_out": "Max energy output: %s",
   "tooltip.honeytech.energy_consumption": "Power consumption: %s",
+  "tooltip.honeytech.energy_production": "Power production: %s",
 
 
   "advancements.honeytech.root.title": "HoneyTech",

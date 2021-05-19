@@ -1,5 +1,6 @@
 package eu.pb4.honeytech.blockentity.electric;
 
+import eu.pb4.honeytech.block.MachineBlock;
 import eu.pb4.honeytech.block.electric.CoalGeneratorBlock;
 import eu.pb4.honeytech.blockentity.EnergyHolder;
 import eu.pb4.honeytech.blockentity.HTBlockEntities;
@@ -67,9 +68,15 @@ public class CoalGeneratorBlockEntity extends LockableContainerBlockEntity imple
 
     @Override
     public void tick() {
+        if (this.world.isClient) {
+            return;
+        }
+
         int slot = -1;
 
         Map<Item, Integer> fuels = FuelRegistryImpl.INSTANCE.getFuelTimes();
+
+        MachineBlock machine = ((MachineBlock) this.getCachedState().getBlock());
 
         for (int x = 0; x < this.size(); x++) {
             ItemStack stack = this.getStack(x);
@@ -82,7 +89,7 @@ public class CoalGeneratorBlockEntity extends LockableContainerBlockEntity imple
         if (this.cooldown > 0 && !this.isFullEnergy()) {
             this.cooldown--;
             this.isPaused = false;
-            this.energy += 16 * ((CoalGeneratorBlock) this.getCachedState().getBlock()).tier.energyMultiplier;
+            this.energy += machine.getPerTickEnergyProduction();
         } else {
             this.isPaused = true;
         }
@@ -111,7 +118,7 @@ public class CoalGeneratorBlockEntity extends LockableContainerBlockEntity imple
             }
         }
 
-        EnergyHolder.provideEnergyToConsumers(this, this.world, this.pos, 512);
+        EnergyHolder.provideEnergyToConsumers(this, this.world, this.pos, machine.getMaxEnergyOutput());
 
         if (this.isGenerating) {
             try {
@@ -194,12 +201,12 @@ public class CoalGeneratorBlockEntity extends LockableContainerBlockEntity imple
 
     @Override
     public double getMaxEnergyCapacity() {
-        return ((CoalGeneratorBlock) this.getCachedState().getBlock()).tier.energyCapacity;
+        return ((MachineBlock) this.getCachedState().getBlock()).getCapacity();
     }
 
     @Override
     public double getMaxEnergyTransferCapacity(Direction dir, boolean isDraining) {
-        return 8 * ((CoalGeneratorBlock) this.getCachedState().getBlock()).tier.energyMultiplier;
+        return ((MachineBlock) this.getCachedState().getBlock()).getMaxEnergyOutput();
     }
 
     public void openInventory(ServerPlayerEntity player) {

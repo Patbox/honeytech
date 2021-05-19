@@ -1,6 +1,6 @@
 package eu.pb4.honeytech.blockentity.electric;
 
-import eu.pb4.honeytech.block.electric.ElectricGrinderBlock;
+import eu.pb4.honeytech.block.MachineBlock;
 import eu.pb4.honeytech.blockentity.EnergyHolder;
 import eu.pb4.honeytech.blockentity.HTBlockEntities;
 import eu.pb4.honeytech.blockentity.machines_common.GrinderBlockEntity;
@@ -53,25 +53,32 @@ public class ElectricGrinderBlockEntity extends GrinderBlockEntity implements En
 
     @Override
     public double getMaxEnergyCapacity() {
-        return ((ElectricGrinderBlock) this.getCachedState().getBlock()).tier.energyCapacity;
+        return ((MachineBlock) this.getCachedState().getBlock()).getCapacity();
     }
 
     @Override
     public double getMaxEnergyTransferCapacity(Direction dir, boolean isDraining) {
-        return 256;
+        return isDraining ? 0 : ((MachineBlock) this.getCachedState().getBlock()).getMaxEnergyInput();
     }
 
     @Override
     public void tick() {
-        this.ticker++;
-        EnergyHolder.takeEnergyFromSources(this, this.world, this.pos, 256);
+        if (this.world.isClient) {
+            return;
+        }
 
-        if (this.ticker >= 10) {
+        this.ticker++;
+        EnergyHolder.takeEnergyFromSources(this, this.world, this.pos, ((MachineBlock) this.getCachedState().getBlock()).getMaxEnergyInput());
+
+        int ticksRequired = (int) (10 / ((MachineBlock) this.getCachedState().getBlock()).getTier().speed);
+
+        if (this.ticker >= ticksRequired) {
             this.ticker = 0;
-            if (this.energy >= 128) {
+            double use = ((MachineBlock) this.getCachedState().getBlock()).getPerTickEnergyUsage() * ticksRequired;
+            if (this.energy >= use) {
                 ActionResult result = this.useHandle(this.getCachedState(), this.getWorld(), this.getPos(), null, null, null);
                 if (result == ActionResult.SUCCESS) {
-                    this.energy -= 128;
+                    this.energy -= use;
                 }
             }
         }
