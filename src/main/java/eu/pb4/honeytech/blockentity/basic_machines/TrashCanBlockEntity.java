@@ -1,6 +1,5 @@
 package eu.pb4.honeytech.blockentity.basic_machines;
 
-import eu.pb4.honeytech.block.HTBlocks;
 import eu.pb4.honeytech.blockentity.HTBlockEntities;
 import eu.pb4.honeytech.other.HTUtils;
 import eu.pb4.honeytech.other.ImplementedInventory;
@@ -12,7 +11,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
@@ -20,6 +18,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.math.BlockPos;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -27,19 +26,12 @@ import java.util.Set;
 public class TrashCanBlockEntity extends LockableContainerBlockEntity implements Inventory, VirtualObject {
     public final Set<TrashCanGui> openGuis = new HashSet<>();
 
-    public TrashCanBlockEntity() {
-        super(HTBlockEntities.TRASHCAN);
+    public TrashCanBlockEntity(BlockPos pos, BlockState state) {
+        super(HTBlockEntities.TRASHCAN, pos, state);
     }
 
     public DefaultedList<ItemStack> getItems() {
         return DefaultedList.ofSize(this.size(), ItemStack.EMPTY);
-    }
-
-    @Override
-    public CompoundTag toTag(CompoundTag tag) {
-        super.toTag(tag);
-
-        return tag;
     }
 
     @Override
@@ -50,11 +42,6 @@ public class TrashCanBlockEntity extends LockableContainerBlockEntity implements
     @Override
     protected ScreenHandler createScreenHandler(int syncId, PlayerInventory playerInventory) {
         return null;
-    }
-
-    @Override
-    public void fromTag(BlockState state, CompoundTag tag) {
-        super.fromTag(state, tag);
     }
 
     public void openInventory(ServerPlayerEntity player) {

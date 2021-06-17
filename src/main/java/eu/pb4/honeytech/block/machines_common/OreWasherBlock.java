@@ -1,7 +1,7 @@
 package eu.pb4.honeytech.block.machines_common;
 
-import eu.pb4.honeytech.blockentity.machines_common.OreWasherBlockEntity;
 import eu.pb4.honeytech.blockentity.HandlePoweredBlockEntity;
+import eu.pb4.honeytech.blockentity.machines_common.OreWasherBlockEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
@@ -15,7 +15,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,15 +61,15 @@ public class OreWasherBlock extends Block implements BlockEntityProvider, Handle
         super.onStateReplaced(state, world, pos, newState, moved);
     }
 
-    @Nullable
-    @Override
-    public BlockEntity createBlockEntity(BlockView world) {
-        return new OreWasherBlockEntity();
-    }
-
 
     @Override
     public ActionResult useHandle(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         return ActionResult.PASS;
+    }
+
+    @Nullable
+    @Override
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new OreWasherBlockEntity(pos, state);
     }
 }

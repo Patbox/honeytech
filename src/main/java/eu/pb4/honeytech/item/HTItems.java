@@ -30,14 +30,9 @@ public class HTItems {
 
     public static Item PORTABLE_CRAFTING = new PortableCraftingItem(new Item.Settings().maxCount(1));
 
-    public static Item IRON_DUST = new BasicVirtualItem(new Item.Settings(), Items.GUNPOWDER);
-    public static Item GOLD_DUST = new BasicVirtualItem(new Item.Settings(), Items.GLOWSTONE_DUST);
-    public static Item DIAMOND_DUST = new BasicVirtualItem(new Item.Settings(), Items.LIGHT_BLUE_DYE);
     public static Item COAL_DUST = new BasicVirtualItem(new Item.Settings(), Items.GUNPOWDER);
-    public static Item COPPER_DUST = new BasicVirtualItem(new Item.Settings(), Items.GLOWSTONE_DUST);
-    public static Item ALUMINIUM_DUST = new BasicVirtualItem(new Item.Settings(), Items.SUGAR);
+    public static Item RAW_ALUMINIUM = new BasicVirtualItem(new Item.Settings(), Items.RAW_IRON);
 
-    public static Item COPPER_INGOT = new BasicVirtualItem(new Item.Settings(), Items.BRICK);
     public static Item ALUMINIUM_INGOT = new BasicVirtualItem(new Item.Settings(), Items.IRON_INGOT);
 
     public static Item PIPE = new GlowingBlockItem(HTBlocks.PIPE, Items.DIORITE_WALL, new Item.Settings());
@@ -95,14 +90,9 @@ public class HTItems {
 
         register("portable_crafting", PORTABLE_CRAFTING);
 
-        register("iron_dust", IRON_DUST);
-        register("gold_dust", GOLD_DUST);
-        register("diamond_dust", DIAMOND_DUST);
         register("coal_dust", COAL_DUST);
-        register("copper_dust", COPPER_DUST);
-        register("aluminium_dust", ALUMINIUM_DUST);
+        register("raw_aluminium", RAW_ALUMINIUM);
 
-        register("copper_ingot", COPPER_INGOT);
         register("aluminium_ingot", ALUMINIUM_INGOT);
 
         register("pipe", PIPE);
@@ -148,16 +138,16 @@ public class HTItems {
         HTDataPack.createCraftingShaped(AMMETER, 1, "I I| S | S ", p("I", Items.GOLD_INGOT), p("S", Items.STICK));
         HTDataPack.createCraftingShaped(BASIC_GRINDER, 1, "CPC|CFC|CFC", p("C", Items.COBBLESTONE), p("P", "minecraft:planks"), p("F", Items.FLINT));
         HTDataPack.createCraftingShaped(BASIC_ORE_WASHER, 1, "T|W|C", p("C", Items.CAULDRON), p("T", "minecraft:trapdoors"), p("W", "minecraft:wool"));
-        HTDataPack.createCraftingShaped(BATTERY, 1, "RIR|ADA|ACA", p("I", Items.IRON_INGOT), p("R", Items.REDSTONE), p("C", COPPER_INGOT), p("A", ALUMINIUM_INGOT), p("D", Items.GLOWSTONE));
+        HTDataPack.createCraftingShaped(BATTERY, 1, "RIR|ADA|ACA", p("I", Items.IRON_INGOT), p("R", Items.REDSTONE), p("C", Items.COPPER_INGOT), p("A", ALUMINIUM_INGOT), p("D", Items.GLOWSTONE));
         HTDataPack.createCraftingShaped(BIG_BATTERY, 1, "IBI|BEB|IBI", p("I", Items.GOLD_INGOT), p("E", ENERGY_REGULATOR), p("B", MEDIUM_BATTERY));
 
-        HTDataPack.createCraftingShaped(CABLE, 6, "NNN|III|NNN", p("N", Items.NETHER_BRICK), p("I", COPPER_INGOT));
+        HTDataPack.createCraftingShaped(CABLE, 6, "NNN|III|NNN", p("N", Items.NETHER_BRICK), p("I", Items.COPPER_INGOT));
 
         HTDataPack.createCraftingShaped(COAL_GENERATOR_MK1, 1, "IMI|IFI|IBI", p("F", Items.FURNACE), p("I", Items.IRON_INGOT), p("M", MOTOR), p("B", BATTERY));
         HTDataPack.createCraftingShaped(COAL_GENERATOR_MK2, 1, "III|MFM|IBI", p("F", COAL_GENERATOR_MK1), p("I", Items.IRON_INGOT), p("M", MOTOR), p("B", BATTERY));
         HTDataPack.createCraftingShaped(COAL_GENERATOR_MK3, 1, "III|MFM|IBI", p("F", COAL_GENERATOR_MK2), p("I", Items.IRON_BLOCK), p("M", MOTOR), p("B", BATTERY));
 
-        HTDataPack.createCraftingShaped(COPPER_WIRE, 6, "CC|  ", p("C", COPPER_INGOT));
+        HTDataPack.createCraftingShaped(COPPER_WIRE, 6, "CC|  ", p("C", Items.COPPER_INGOT));
 
         HTDataPack.createCraftingShaped(ELECTRIC_FURNACE_MK1, 1, "IMI|IFI|IBI", p("F", Items.FURNACE), p("I", Items.IRON_INGOT), p("M", ENERGY_REGULATOR), p("B", BATTERY));
         HTDataPack.createCraftingShaped(ELECTRIC_FURNACE_MK2, 1, "III|MFM|IBI", p("F", ELECTRIC_FURNACE_MK1), p("I", Items.IRON_INGOT), p("M", ENERGY_REGULATOR), p("B", BATTERY));
@@ -170,7 +160,7 @@ public class HTItems {
         HTDataPack.createCraftingShaped(ENCHANCED_FURNACE, 1, "III|IFI|III", p("I", Items.IRON_INGOT), p("F", Items.FURNACE));
 
         HTDataPack.createCraftingShaped(ENERGY_REGULATOR, 1, "RIR|IAI|CIC", p("I", Items.IRON_INGOT), p("R", Items.REDSTONE), p("C", COPPER_WIRE), p("A", ALUMINIUM_INGOT));
-        HTDataPack.createCraftingShaped(ITEM_EXTRACTOR, 1, "A A|CHC|ACA", p("A", ALUMINIUM_INGOT), p("C", COPPER_INGOT), p("H", Items.HOPPER));
+        HTDataPack.createCraftingShaped(ITEM_EXTRACTOR, 1, "A A|CHC|ACA", p("A", ALUMINIUM_INGOT), p("C", Items.COPPER_INGOT), p("H", Items.HOPPER));
         HTDataPack.createCraftingShaped(MAGNET, 1, "I I|R L|RIL", p("I", Items.IRON_INGOT), p("R", Items.REDSTONE_BLOCK), p("L", Items.LAPIS_BLOCK));
 
         HTDataPack.createCraftingShaped(MEDIUM_BATTERY, 1, "IBI|IRI|IBI", p("I", Items.IRON_BLOCK), p("R", ENERGY_REGULATOR), p("B", SMALL_BATTERY));
@@ -185,11 +175,9 @@ public class HTItems {
 
         HTDataPack.createCraftingShaped(TRASHCAN, 1, "ICI| I |   ", p("I", Items.IRON_INGOT), p("C", Items.CACTUS));
 
-        HTDataPack.createSmeltingRecipe(COPPER_INGOT, COPPER_DUST, 200, 0.7);
-        HTDataPack.createBlastingRecipe(COPPER_INGOT, COPPER_DUST, 100, 0.35);
 
-        HTDataPack.createSmeltingRecipe(ALUMINIUM_INGOT, ALUMINIUM_DUST, 200, 0.7);
-        HTDataPack.createBlastingRecipe(ALUMINIUM_INGOT, ALUMINIUM_DUST, 100, 0.35);
+        HTDataPack.createSmeltingRecipe(ALUMINIUM_INGOT, RAW_ALUMINIUM, 200, 0.7);
+        HTDataPack.createBlastingRecipe(ALUMINIUM_INGOT, RAW_ALUMINIUM, 100, 0.35);
 
         HTDataPack.createCraftingShaped(ELECTRIC_ORE_WASHER_MK1, 1, "IMI|IFI|IBI", p("F", BASIC_ORE_WASHER), p("I", Items.IRON_INGOT), p("M", MOTOR), p("B", BATTERY));
         HTDataPack.createCraftingShaped(ELECTRIC_ORE_WASHER_MK2, 1, "III|MFM|IBI", p("F", ELECTRIC_ORE_WASHER_MK1), p("I", Items.IRON_INGOT), p("M", MOTOR), p("B", BATTERY));

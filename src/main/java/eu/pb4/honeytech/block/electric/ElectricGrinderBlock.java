@@ -9,7 +9,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.world.BlockView;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 
@@ -20,10 +23,9 @@ public class ElectricGrinderBlock extends GrinderBlock implements VirtualHeadBlo
         this.tier = tier;
     }
 
-    @Nullable
     @Override
-    public BlockEntity createBlockEntity(BlockView world) {
-        return new ElectricGrinderBlockEntity();
+    public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new ElectricGrinderBlockEntity(pos, state);
     }
 
     @Override
@@ -65,5 +67,11 @@ public class ElectricGrinderBlock extends GrinderBlock implements VirtualHeadBlo
     @Override
     public HTTier getTier() {
         return this.tier;
+    }
+
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+        return ElectricGrinderBlockEntity::tick;
     }
 }

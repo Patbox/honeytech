@@ -12,18 +12,22 @@ import eu.pb4.sgui.api.ClickType;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.LockableContainerBlockEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.InventoryS2CPacket;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.recipe.CraftingRecipe;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.recipe.ShapedRecipe;
+import net.minecraft.recipe.ShapelessRecipe;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
@@ -34,29 +38,37 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Tickable;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-public class AutoCrafterBlockEntity extends LockableContainerBlockEntity implements ImplementedInventory, SidedInventory, Tickable, EnergyHolder, VirtualObject {
+public class AutoCrafterBlockEntity extends LockableContainerBlockEntity implements ImplementedInventory, SidedInventory, EnergyHolder, VirtualObject {
     private static final int[] SLOTS = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27};
 
     public final Set<Gui> openGuis = new HashSet<>();
     private final DefaultedList<ItemStack> items = DefaultedList.ofSize(28, ItemStack.EMPTY);
     private double energy = 0;
-    private ItemStack invalidItemStack = null;
+    private final ItemStack invalidItemStack = null;
+    private long ticker = 0;
 
-    private final CraftingInventory craftingInventory = new CraftingInventory(null, 3, 3);
+    private final CraftingInventory craftingInventory = new CraftingInventory(new ScreenHandler(null, -1) {
+        @Override
+        public boolean canUse(PlayerEntity player) {
+            return false;
+        }
+    }, 3, 3);
 
-    private CraftingRecipe recipe = null;
+    private ArrayList<CraftingRecipe> recipes = null;
 
-    public AutoCrafterBlockEntity() {
-        super(HTBlockEntities.AUTO_CRAFTER);
+    public AutoCrafterBlockEntity(BlockPos pos, BlockState state) {
+        super(HTBlockEntities.AUTO_CRAFTER, pos, state);
     }
 
     public void openInventory(ServerPlayerEntity player) {
@@ -68,17 +80,17 @@ public class AutoCrafterBlockEntity extends LockableContainerBlockEntity impleme
     }
 
     @Override
-    public void fromTag(BlockState state, CompoundTag tag) {
-        super.fromTag(state, tag);
+    public void readNbt(NbtCompound tag) {
+        super.readNbt(tag);
         this.energy = tag.getDouble("Energy");
-        Inventories.fromTag(tag, items);
+        Inventories.readNbt(tag, items);
     }
 
     @Override
-    public CompoundTag toTag(CompoundTag tag) {
-        CompoundTag out = super.toTag(tag);
+    public NbtCompound writeNbt(NbtCompound tag) {
+        NbtCompound out = super.writeNbt(tag);
         out.putDouble("Energy", this.energy);
-        Inventories.toTag(tag, items);
+        Inventories.writeNbt(tag, items);
         return tag;
     }
 
@@ -142,30 +154,42 @@ public class AutoCrafterBlockEntity extends LockableContainerBlockEntity impleme
         return slot != 0 && slot > 18;
     }
 
-    @Override
-    public void tick() {
-        if (this.world.isClient || this.items.get(0).isEmpty() || this.invalidItemStack == this.items.get(0)) {
+
+    public static <T extends BlockEntity> void tick(World world, BlockPos pos, BlockState state, T t) {
+        if (!(t instanceof AutoCrafterBlockEntity self)) {
             return;
         }
 
-        if (this.recipe == null || this.recipe.getOutput().isItemEqualIgnoreDamage(this.items.get(0))) {
-            this.recipe = findRecipe();
-            if (this.recipe == null) {
-                this.invalidItemStack = this.items.get(0);
-            }
+        if (world.isClient || self.items.get(0).isEmpty() || self.invalidItemStack == self.items.get(0)) {
+            return;
         }
 
-        if (this.re)
+        self.ticker++;
+
+        if (self.ticker % 20 != 0) {
+            return;
+        }
+
+        if (self.validateOrFindRecipe()) {
+            return;
+        }
+
+
     }
 
-    private CraftingRecipe findRecipe() {
+    private boolean validateOrFindRecipe() {
         ItemStack target = this.items.get(0);
+        if (this.recipes == null || this.recipes.size() == 0 || this.recipes.get(0).getOutput().isItemEqualIgnoreDamage(target)) {
+            this.recipes = new ArrayList<>();
 
-        for (CraftingRecipe recipe : this.world.getRecipeManager().listAllOfType(RecipeType.CRAFTING)) {
-            if (recipe.getOutput().isItemEqualIgnoreDamage(target)) {
-                return recipe;
+            for (CraftingRecipe recipe : this.world.getRecipeManager().listAllOfType(RecipeType.CRAFTING)) {
+                if ((recipe instanceof ShapedRecipe || recipe instanceof ShapelessRecipe) &&  recipe.getOutput().isItemEqualIgnoreDamage(target)) {
+                    recipes.add(recipe);
+                }
             }
         }
+
+        return this.recipes.size() > 0;
     }
 
     public static class Gui extends SimpleGui {
@@ -185,7 +209,7 @@ public class AutoCrafterBlockEntity extends LockableContainerBlockEntity impleme
 
             if (slot instanceof OutputSlot) {
                 this.player.networkHandler.sendPacket(new InventoryS2CPacket(this.syncId, this.screenHandler.getStacks()));
-                this.player.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(-1, -1, this.player.inventory.getCursorStack()));
+                this.player.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(-1, -1, screenHandler.getCursorStack()));
             }
 
             return super.onAnyClick(index, type, action);

@@ -11,13 +11,8 @@
         },
         {
           "type": "minecraft:item",
-          "weight": 20,
-          "name": "honeytech:copper_dust"
-        },
-        {
-          "type": "minecraft:item",
           "weight": 15,
-          "name": "honeytech:aluminium_dust"
+          "name": "honeytech:raw_aluminium"
         },
         {
           "type": "minecraft:empty",

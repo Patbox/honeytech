@@ -1,12 +1,14 @@
 package eu.pb4.honeytech.block.storage;
 
 import com.google.common.collect.ImmutableList;
+import eu.pb4.honeytech.block.WrenchableBlock;
 import eu.pb4.honeytech.blockentity.storage.ItemExtractorBlockEntity;
 import eu.pb4.honeytech.blockentity.storage.PipeBlockEntity;
-import eu.pb4.honeytech.block.WrenchableBlock;
 import eu.pb4.polymer.block.VirtualBlock;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.enums.WallMountLocation;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.inventory.Inventory;
@@ -18,7 +20,6 @@ import net.minecraft.state.property.Properties;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -99,14 +100,21 @@ public class ItemExtractorBlock extends Block implements BlockEntityProvider, Vi
 
     }
 
-    @Nullable
-    @Override
-    public BlockEntity createBlockEntity(BlockView world) {
-        return new ItemExtractorBlockEntity();
-    }
 
     @Override
     public Collection<Property<?>> getWrenchableProperies() {
         return ImmutableList.of(INPUT_DIR, OUTPUT_DIR);
+    }
+
+    @Nullable
+    @Override
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new ItemExtractorBlockEntity(pos, state);
+    }
+
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+        return ItemExtractorBlockEntity::tick;
     }
 }

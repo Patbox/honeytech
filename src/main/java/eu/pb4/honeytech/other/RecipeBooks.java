@@ -1,6 +1,5 @@
 package eu.pb4.honeytech.other;
 
-import eu.pb4.honeytech.mixin.IngredientAccessor;
 import eu.pb4.honeytech.recipe_types.GrinderRecipe;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
@@ -45,9 +44,8 @@ public class RecipeBooks {
 
                     if (page.get() * 9 + x < recipeSize) {
                         GrinderRecipe recipe = recipeList.get(page.get() * 9 + x);
-                        IngredientAccessor ia = ((IngredientAccessor) (Object) recipe.getInput());
-                        ia.invokeCacheMatchingStacks();
-                        this.setSlot(x, ia.getMatchingStacks()[0]);
+
+                        this.setSlot(x, recipe.getInput().getMatchingStacksClient()[0]);
                         this.setSlot(x + 9, recipe.getOutput().copy());
                     }
 

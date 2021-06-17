@@ -5,7 +5,6 @@ import eu.pb4.honeytech.blockentity.EnergyHolder;
 import eu.pb4.honeytech.blockentity.HTBlockEntities;
 import eu.pb4.honeytech.blockentity.HandlePoweredBlockEntity;
 import eu.pb4.honeytech.item.HTItems;
-import eu.pb4.honeytech.mixin.BlockSoundGroupAccessor;
 import eu.pb4.honeytech.other.HTUtils;
 import eu.pb4.honeytech.other.ImplementedInventory;
 import eu.pb4.honeytech.other.OutputSlot;
@@ -26,7 +25,7 @@ import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.InventoryS2CPacket;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.particle.ItemStackParticleEffect;
@@ -67,26 +66,25 @@ public class GrinderBlockEntity extends LockableContainerBlockEntity implements 
     private int click = 0;
     private double offset = -1;
 
-    public GrinderBlockEntity() {
-        this(HTBlockEntities.GRINDER);
+    public GrinderBlockEntity(BlockPos pos, BlockState state) {
+        this(HTBlockEntities.GRINDER, pos, state);
     }
 
-    public GrinderBlockEntity(BlockEntityType<?> blockEntityType) {
-        super(blockEntityType);
+    public GrinderBlockEntity(BlockEntityType<?> blockEntityType, BlockPos pos, BlockState state) {
+        super(blockEntityType, pos, state);
         this.input = ImplementedInventory.ofSize(9);
         this.output = ImplementedInventory.ofSize(9);
     }
 
-
     @Override
-    public CompoundTag toTag(CompoundTag tag) {
-        super.toTag(tag);
+    public NbtCompound writeNbt(NbtCompound tag) {
+        super.writeNbt(tag);
 
-        CompoundTag input = new CompoundTag();
-        Inventories.toTag(input, this.input.getItems());
+        NbtCompound input = new NbtCompound();
+        Inventories.writeNbt(input, this.input.getItems());
 
-        CompoundTag output = new CompoundTag();
-        Inventories.toTag(output, this.output.getItems());
+        NbtCompound output = new NbtCompound();
+        Inventories.writeNbt(output, this.output.getItems());
 
         tag.put("input", input);
         tag.put("output", output);
@@ -95,12 +93,12 @@ public class GrinderBlockEntity extends LockableContainerBlockEntity implements 
     }
 
     @Override
-    public void fromTag(BlockState state, CompoundTag tag) {
-        super.fromTag(state, tag);
+    public void readNbt(NbtCompound tag) {
+        super.readNbt(tag);
 
         try {
-            Inventories.fromTag(tag.getCompound("input"), this.input.getItems());
-            Inventories.fromTag(tag.getCompound("output"), this.output.getItems());
+            Inventories.readNbt(tag.getCompound("input"), this.input.getItems());
+            Inventories.readNbt(tag.getCompound("output"), this.output.getItems());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -237,7 +235,7 @@ public class GrinderBlockEntity extends LockableContainerBlockEntity implements 
                         SoundEvent event = SoundEvents.BLOCK_STONE_BREAK;
                         if (stack.getItem() instanceof BlockItem) {
                             Block block = ((BlockItem) stack.getItem()).getBlock();
-                            event = ((BlockSoundGroupAccessor) block.getSoundGroup(block.getDefaultState())).getBreakSoundServer();
+                            event = block.getSoundGroup(block.getDefaultState()).getBreakSound();
                         }
 
                         world.playSound(null, pos.getX() + 0.5d, pos.getY() + 0.5d, pos.getZ() + 0.5d, event, SoundCategory.BLOCKS, 0.4f, 1f);
@@ -274,7 +272,7 @@ public class GrinderBlockEntity extends LockableContainerBlockEntity implements 
 
             if (slot instanceof OutputSlot) {
                 this.player.networkHandler.sendPacket(new InventoryS2CPacket(this.syncId, this.screenHandler.getStacks()));
-                this.player.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(-1, -1, this.player.inventory.getCursorStack()));
+                this.player.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(-1, -1, this.screenHandler.getCursorStack()));
             }
 
             return super.onAnyClick(index, type, action);

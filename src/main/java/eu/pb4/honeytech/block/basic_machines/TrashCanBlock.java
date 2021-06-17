@@ -1,7 +1,7 @@
 package eu.pb4.honeytech.block.basic_machines;
 
-import eu.pb4.honeytech.blockentity.basic_machines.TrashCanBlockEntity;
 import eu.pb4.honeytech.blockentity.HandlePoweredBlockEntity;
+import eu.pb4.honeytech.blockentity.basic_machines.TrashCanBlockEntity;
 import eu.pb4.polymer.block.VirtualHeadBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
@@ -15,7 +15,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,11 +54,6 @@ public class TrashCanBlock extends Block implements BlockEntityProvider, HandleP
         super.onStateReplaced(state, world, pos, newState, moved);
     }
 
-    @Nullable
-    @Override
-    public BlockEntity createBlockEntity(BlockView world) {
-        return new TrashCanBlockEntity();
-    }
 
 
     @Override
@@ -75,5 +69,11 @@ public class TrashCanBlock extends Block implements BlockEntityProvider, HandleP
     @Override
     public Block getVirtualBlock() {
         return Blocks.PLAYER_HEAD;
+    }
+
+    @Nullable
+    @Override
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new TrashCanBlockEntity(pos, state);
     }
 }

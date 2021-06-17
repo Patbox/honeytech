@@ -1,6 +1,5 @@
 package eu.pb4.honeytech.block.basic_machines;
 
-import eu.pb4.honeytech.mixin.BlockSoundGroupAccessor;
 import eu.pb4.honeytech.other.ImplementedInventory;
 import eu.pb4.honeytech.recipe_types.TableSawRecipe;
 import eu.pb4.polymer.block.VirtualBlock;
@@ -83,11 +82,11 @@ public class TableSawBlock extends Block implements VirtualBlock {
             TableSawRecipe recipe = match.get();
             ItemStack copy = player.getStackInHand(hand).copy();
             player.getStackInHand(hand).decrement(1);
-            player.inventory.offerOrDrop(world, recipe.getOutput().copy());
+            player.getInventory().offerOrDrop(recipe.getOutput().copy());
             SoundEvent event = SoundEvents.BLOCK_WOOD_BREAK;
             if (copy.getItem() instanceof BlockItem) {
                 Block block = ((BlockItem) copy.getItem()).getBlock();
-                event = ((BlockSoundGroupAccessor) block.getSoundGroup(block.getDefaultState())).getBreakSoundServer();
+                event = block.getSoundGroup(block.getDefaultState()).getBreakSound();
             }
 
             Parts part = state.get(PART);
@@ -159,7 +158,7 @@ public class TableSawBlock extends Block implements VirtualBlock {
     public void onPlaced(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
         boolean eastOrWest = false;
 
-        Direction d = Direction.fromRotation(placer.yaw);
+        Direction d = Direction.fromRotation(placer.getYaw());
 
         if (d == Direction.EAST || d == Direction.WEST) {
             eastOrWest = true;

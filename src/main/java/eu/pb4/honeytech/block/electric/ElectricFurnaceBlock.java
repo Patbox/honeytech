@@ -11,6 +11,8 @@ import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemPlacementContext;
@@ -23,8 +25,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
@@ -61,11 +63,6 @@ public class ElectricFurnaceBlock extends Block implements VirtualHeadBlock, Blo
     @Override
     public Block getVirtualBlock() {
         return Blocks.PLAYER_HEAD;
-    }
-
-    @Override
-    public BlockEntity createBlockEntity(BlockView world) {
-        return new ElectricFurnaceBlockEntity();
     }
 
     @Override
@@ -127,5 +124,17 @@ public class ElectricFurnaceBlock extends Block implements VirtualHeadBlock, Blo
     @Override
     public HTTier getTier() {
         return this.tier;
+    }
+
+    @Nullable
+    @Override
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new ElectricFurnaceBlockEntity(pos, state);
+    }
+
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+        return ElectricFurnaceBlockEntity::tick;
     }
 }

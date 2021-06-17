@@ -5,8 +5,10 @@ import eu.pb4.honeytech.gui.guide.GuideGui;
 import eu.pb4.polymer.item.VirtualItem;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.*;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
@@ -36,7 +38,7 @@ public class GuideItem extends Item implements VirtualItem {
     public ItemStack getVirtualItemStack(ItemStack itemStack, ServerPlayerEntity player) {
         ItemStack out = VirtualItem.super.getVirtualItemStack(itemStack, player);
         out.addEnchantment(Enchantments.INFINITY, 0);
-        out.getOrCreateTag().put("Recipes", new ListTag());
+        out.getOrCreateTag().put("Recipes", new NbtList());
         return out;
     }
 

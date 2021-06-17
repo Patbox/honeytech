@@ -13,12 +13,13 @@ import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.LockableContainerBlockEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerPropertyUpdateS2CPacket;
 import net.minecraft.recipe.*;
 import net.minecraft.screen.ScreenHandler;
@@ -31,17 +32,18 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Tickable;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-public class ElectricFurnaceBlockEntity extends LockableContainerBlockEntity implements ImplementedInventory, SidedInventory, RecipeUnlocker, RecipeInputProvider, Tickable, EnergyHolder, VirtualObject {
+public class ElectricFurnaceBlockEntity extends LockableContainerBlockEntity implements ImplementedInventory, SidedInventory, RecipeUnlocker, RecipeInputProvider, EnergyHolder, VirtualObject {
     public final Set<Gui> openGuis = new HashSet<>();
 
     private final DefaultedList<ItemStack> items = DefaultedList.ofSize(2, ItemStack.EMPTY);
@@ -52,8 +54,8 @@ public class ElectricFurnaceBlockEntity extends LockableContainerBlockEntity imp
     private SmeltingRecipe currentRecipe = null;
     private Identifier recipeId = null;
 
-    public ElectricFurnaceBlockEntity() {
-        super(HTBlockEntities.ELECTRIC_FURNACE);
+    public ElectricFurnaceBlockEntity(BlockPos pos, BlockState state) {
+        super(HTBlockEntities.ELECTRIC_FURNACE, pos, state);
     }
 
     @Override
@@ -87,9 +89,10 @@ public class ElectricFurnaceBlockEntity extends LockableContainerBlockEntity imp
     }
 
     @Override
-    public void provideRecipeInputs(RecipeFinder finder) {
-        finder.addItem(this.items.get(0));
+    public void provideRecipeInputs(RecipeMatcher finder) {
+        finder.addInput(this.items.get(0));
     }
+
 
     @Nullable
     @Override
@@ -105,80 +108,83 @@ public class ElectricFurnaceBlockEntity extends LockableContainerBlockEntity imp
     }
 
     @Override
-    public void fromTag(BlockState state, CompoundTag tag) {
-        super.fromTag(state, tag);
+    public void readNbt(NbtCompound tag) {
+        super.readNbt(tag);
         this.energy = tag.getDouble("Energy");
         this.cookTime = tag.getInt("CookTime");
         this.cookTimeTotal = tag.getInt("CookTimeTotal");
         this.recipeId = Identifier.tryParse(tag.getString("Recipe"));
-        Inventories.fromTag(tag, this.items);
+        Inventories.readNbt(tag, this.items);
     }
 
     @Override
-    public CompoundTag toTag(CompoundTag tag) {
-        super.toTag(tag);
+    public NbtCompound writeNbt(NbtCompound tag) {
+        super.writeNbt(tag);
         tag.putDouble("Energy", this.energy);
         tag.putInt("CookTime", this.cookTime);
         tag.putInt("CookTimeTotal", this.cookTimeTotal);
         if (this.currentRecipe != null) {
             tag.putString("Recipe", this.currentRecipe.getId().toString());
         }
-        Inventories.toTag(tag, this.items);
+        Inventories.writeNbt(tag, this.items);
         return tag;
     }
 
-    @Override
-    public void tick() {
-        if (this.world.isClient) {
+    public static <T extends BlockEntity> void tick(World world, BlockPos pos, BlockState state, T t) {
+        if (!(t instanceof ElectricFurnaceBlockEntity self)) {
             return;
         }
-        MachineBlock machine = (MachineBlock) this.getCachedState().getBlock();
 
-        EnergyHolder.takeEnergyFromSources(this, this.world, this.pos, machine.getMaxEnergyInput());
+        if (self.world.isClient) {
+            return;
+        }
+        MachineBlock machine = (MachineBlock) self.getCachedState().getBlock();
 
-        if (this.recipeId != null) {
-            Optional<?> recipe = this.world.getRecipeManager().get(this.recipeId);
+        EnergyHolder.takeEnergyFromSources(self, self.world, self.pos, machine.getMaxEnergyInput());
+
+        if (self.recipeId != null) {
+            Optional<?> recipe = self.world.getRecipeManager().get(self.recipeId);
             if (recipe.isPresent()) {
-                this.currentRecipe = (SmeltingRecipe) recipe.get();
-                this.cookTimeTotal = this.currentRecipe.getCookTime();
+                self.currentRecipe = (SmeltingRecipe) recipe.get();
+                self.cookTimeTotal = self.currentRecipe.getCookTime();
             }
-            this.recipeId = null;
+            self.recipeId = null;
         }
 
-        if (this.getItems().get(0).isEmpty()
-                || this.energy < machine.getPerTickEnergyUsage()
-                || (this.currentRecipe != null && !this.canAcceptRecipeOutput(this.currentRecipe))) {
-            this.cookTime = MathHelper.clamp(this.cookTime - 1, 0, this.cookTimeTotal);
+        if (self.getItems().get(0).isEmpty()
+                || self.energy < machine.getPerTickEnergyUsage()
+                || (self.currentRecipe != null && !self.canAcceptRecipeOutput(self.currentRecipe))) {
+            self.cookTime = MathHelper.clamp(self.cookTime - 1, 0, self.cookTimeTotal);
             return;
-        } else if (this.energy == 8) {
+        } else if (self.energy == 8) {
             return;
         }
 
-        if (this.currentRecipe == null || !this.currentRecipe.matches(this, this.world)) {
-            Optional<SmeltingRecipe> optional = this.world.getRecipeManager().getFirstMatch(RecipeType.SMELTING, this, this.world);
+        if (self.currentRecipe == null || !self.currentRecipe.matches(self, self.world)) {
+            Optional<SmeltingRecipe> optional = self.world.getRecipeManager().getFirstMatch(RecipeType.SMELTING, self, self.world);
             if (optional.isPresent()) {
-                this.currentRecipe = optional.get();
-                this.cookTime = 0;
-                this.cookTimeTotal = this.currentRecipe.getCookTime();
+                self.currentRecipe = optional.get();
+                self.cookTime = 0;
+                self.cookTimeTotal = self.currentRecipe.getCookTime();
             } else {
-                this.cookTime = MathHelper.clamp(this.cookTime - 1, 0, this.cookTimeTotal);
+                self.cookTime = MathHelper.clamp(self.cookTime - 1, 0, self.cookTimeTotal);
             }
             return;
         }
-        if (this.canAcceptRecipeOutput(this.currentRecipe)) {
-            this.cookTime += (int) ((ElectricFurnaceBlock) this.getCachedState().getBlock()).tier.speed;
+        if (self.canAcceptRecipeOutput(self.currentRecipe)) {
+            self.cookTime += (int) ((ElectricFurnaceBlock) self.getCachedState().getBlock()).tier.speed;
 
-            this.energy -= machine.getPerTickEnergyUsage();
-            if (this.cookTime >= this.cookTimeTotal) {
-                this.items.get(0).decrement(1);
-                ItemStack stack = this.items.get(1);
+            self.energy -= machine.getPerTickEnergyUsage();
+            if (self.cookTime >= self.cookTimeTotal) {
+                self.items.get(0).decrement(1);
+                ItemStack stack = self.items.get(1);
                 if (stack.isEmpty()) {
-                    this.setStack(1, currentRecipe.getOutput().copy());
+                    self.setStack(1, self.currentRecipe.getOutput().copy());
                 } else {
                     stack.increment(1);
                 }
-                this.cookTime = 0;
-                this.cookTimeTotal = this.currentRecipe.getCookTime();
+                self.cookTime = 0;
+                self.cookTimeTotal = self.currentRecipe.getCookTime();
             } else {
                 return;
             }

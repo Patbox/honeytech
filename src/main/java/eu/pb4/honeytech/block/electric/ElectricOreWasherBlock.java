@@ -9,7 +9,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.world.BlockView;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class ElectricOreWasherBlock extends OreWasherBlock implements VirtualHeadBlock, MachineBlock {
@@ -19,10 +22,9 @@ public class ElectricOreWasherBlock extends OreWasherBlock implements VirtualHea
         this.tier = tier;
     }
 
-    @Nullable
     @Override
-    public BlockEntity createBlockEntity(BlockView world) {
-        return new ElectricOreWasherBlockEntity();
+    public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new ElectricOreWasherBlockEntity(pos, state);
     }
 
     @Override
@@ -63,5 +65,11 @@ public class ElectricOreWasherBlock extends OreWasherBlock implements VirtualHea
     @Override
     public HTTier getTier() {
         return this.tier;
+    }
+
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+        return ElectricOreWasherBlockEntity::tick;
     }
 }

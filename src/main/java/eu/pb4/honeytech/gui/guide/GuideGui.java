@@ -1,7 +1,6 @@
 package eu.pb4.honeytech.gui.guide;
 
 import eu.pb4.honeytech.item.HTItems;
-import eu.pb4.honeytech.mixin.IngredientAccessor;
 import eu.pb4.honeytech.mixin.SmithingRecipeAccessor;
 import eu.pb4.honeytech.other.HTUtils;
 import eu.pb4.honeytech.recipe_types.GrinderRecipe;
@@ -30,6 +29,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.registry.Registry;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,16 +43,16 @@ public class GuideGui extends SimpleGui {
 
     private static final Style CRAFT_ACTION_STYLE = Style.EMPTY.withItalic(false).withColor(Formatting.GREEN);
 
-    public static GuideTab MAIN_GUIDE = new GuideTab(HTUtils.getText("gui", "guide/main/name"), new ArrayList<>());
-    public static GuideTab BASIC_MACHINES = new GuideTab(HTUtils.getText("gui", "guide/basic_machines/name"), new ArrayList<>());
-    public static GuideTab RESOURCES = new GuideTab(HTUtils.getText("gui", "guide/resources/name"), new ArrayList<>());
-    public static GuideTab USEFUL_ITEMS = new GuideTab(HTUtils.getText("gui", "guide/useful_items/name"), new ArrayList<>());
-    public static GuideTab ELECTRICAL_COMPONENTS = new GuideTab(HTUtils.getText("gui", "guide/electrical_components/name"), new ArrayList<>());
-    public static GuideTab ELECTRICITY = new GuideTab(HTUtils.getText("gui", "guide/electricity/name"), new ArrayList<>());
+    public static GuideTab MAIN_GUIDE = new GuideTab(HTUtils.getText("gui", "guide/main/name"), new ArrayList<>(), null);
+    public static GuideTab BASIC_MACHINES = new GuideTab(HTUtils.getText("gui", "guide/basic_machines/name"), new ArrayList<>(), null);
+    public static GuideTab RESOURCES = new GuideTab(HTUtils.getText("gui", "guide/resources/name"), new ArrayList<>(), null);
+    public static GuideTab USEFUL_ITEMS = new GuideTab(HTUtils.getText("gui", "guide/useful_items/name"), new ArrayList<>(), null);
+    public static GuideTab ELECTRICAL_COMPONENTS = new GuideTab(HTUtils.getText("gui", "guide/electrical_components/name"), new ArrayList<>(), null);
+    public static GuideTab ELECTRICITY = new GuideTab(HTUtils.getText("gui", "guide/electricity/name"), new ArrayList<>(), null);
 
-    public static GuideTab STORAGE = new GuideTab(HTUtils.getText("gui", "guide/storage/name"), new ArrayList<>());
+    public static GuideTab STORAGE = new GuideTab(HTUtils.getText("gui", "guide/storage/name"), new ArrayList<>(), null);
 
-    public static GuideTab VANILLA = new GuideTab(new LiteralText("Minecraft"), new ArrayList<>());
+    public static GuideTab VANILLA = new GuideTab(new LiteralText("Minecraft"), new ArrayList<>(), null);
 
     public static HashMap<Item, GuideTab> ITEM_RECIPES = new HashMap<>();
 
@@ -211,7 +211,7 @@ public class GuideGui extends SimpleGui {
 
                         items.set(9 + offset, type);
 
-                        DefaultedList<Ingredient> ingredients = craftingRecipe.getPreviewInputs();
+                        DefaultedList<Ingredient> ingredients = craftingRecipe.getIngredients();
 
                         for (int i = 0; i < 9; i++) {
                             ItemStack[] stacks = new ItemStack[0];
@@ -243,14 +243,14 @@ public class GuideGui extends SimpleGui {
                             logo = new GuiElementBuilder(Items.BARRIER).setName(new LiteralText("Unknown")).build();
                         }
 
-                        items.set(11 + offset, getRecipeIngredientElement(cookingRecipe.getPreviewInputs().get(0)));
+                        items.set(11 + offset, getRecipeIngredientElement(cookingRecipe.getIngredients().get(0)));
                         items.set(13 + offset, new GuiElementBuilder(Items.FIRE_CHARGE).setName(HTUtils.getText("gui", "guide/recipe/smelts", cookingRecipe.getCookTime() / 20).setStyle(CRAFT_ACTION_STYLE)).build());
                         items.set(15 + offset, new GuiElement(cookingRecipe.getOutput(), GuideGui::emptyCallback));
                     } else if (recipe instanceof StonecuttingRecipe) {
                         StonecuttingRecipe stonecuttingRecipe = (StonecuttingRecipe) recipe;
                         logo = new GuiElementBuilder(Items.STONECUTTER).build();
 
-                        items.set(11 + offset, getRecipeIngredientElement(stonecuttingRecipe.getPreviewInputs().get(0)));
+                        items.set(11 + offset, getRecipeIngredientElement(stonecuttingRecipe.getIngredients().get(0)));
                         items.set(13 + offset, new GuiElementBuilder(Items.ARROW).setName(new LiteralText("")).build());
                         items.set(15 + offset, new GuiElement(stonecuttingRecipe.getOutput(), GuideGui::emptyCallback));
                     } else if (recipe instanceof SmithingRecipe) {
@@ -315,25 +315,20 @@ public class GuideGui extends SimpleGui {
             items.set(13, new GuiElementBuilder(Items.BOOK).setName(HTUtils.getText("gui", "guide/no_recipes").setStyle(CRAFT_ACTION_STYLE)).build());
         }
 
-        GuideTab tab = new GuideTab(HTUtils.getText("gui", "guide/recipe/for", new TranslatableText(item.getTranslationKey())), items);
+        GuideTab tab = new GuideTab(HTUtils.getText("gui", "guide/recipe/for", new TranslatableText(item.getTranslationKey())), items, item);
 
         ITEM_RECIPES.put(item, tab);
         return ImmutablePair.of(tab, recipeCount);
     }
 
     private static GuiElementInterface getRecipeIngredientElement(Ingredient ingredient) {
-        IngredientAccessor ia = ((IngredientAccessor) (Object) ingredient);
-        ia.invokeCacheMatchingStacks();
-        ItemStack[] stacks = ia.getMatchingStacks();
+        ItemStack[] stacks = ingredient.getMatchingStacksClient();
 
         return stacks.length > 0 ? new AnimatedGuiElement(stacks, 20, false, GuideGui::emptyCallback) : new GuiElement(ItemStack.EMPTY, GuideGui::emptyCallback);
     }
 
     private static ItemStack[] readIngredient(Ingredient ingredient) {
-        IngredientAccessor ia = ((IngredientAccessor) (Object) ingredient);
-        ia.invokeCacheMatchingStacks();
-
-        ItemStack[] stacks = ia.getMatchingStacks();
+        ItemStack[] stacks = ingredient.getMatchingStacksClient();
         if (stacks.length > 0) {
             return stacks;
         } else {
@@ -428,21 +423,18 @@ public class GuideGui extends SimpleGui {
 
     @Override
     public boolean onClick(int index, ClickType type, SlotActionType action, GuiElementInterface element) {
-        if (element instanceof GuideElement) {
-            this.openTab(((GuideElement) element).tab);
+        if (element instanceof GuideElement guideElement) {
+            if (type.isMiddle && this.player.isCreative() && guideElement.tab.item != null) {
+                this.screenHandler.setCursorStack(guideElement.tab.item.getDefaultStack());
+                return true;
+            }
+            this.openTab(guideElement.tab);
             return true;
         }
 
         return super.onClick(index, type, action, element);
     }
 
-    public static class GuideTab {
-        public final List<GuiElementInterface> items;
-        public final Text title;
-
-        public GuideTab(Text title, List<GuiElementInterface> items) {
-            this.items = items;
-            this.title = title;
-        }
+    public record GuideTab(Text title, List<GuiElementInterface> items, @Nullable Item item) {
     }
 }

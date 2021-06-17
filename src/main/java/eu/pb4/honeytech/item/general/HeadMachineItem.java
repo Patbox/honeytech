@@ -18,7 +18,7 @@ public class HeadMachineItem extends VirtualHeadBlockItem {
     }
 
     @Override
-    public void addTextToTooltip(List<Text> tooltip, ItemStack stack, ServerPlayerEntity player) {
+    public void modifyTooltip(List<Text> tooltip, ItemStack stack, ServerPlayerEntity player) {
         if (this.getBlock() instanceof MachineBlock) {
             MachineBlock machine = (MachineBlock) this.getBlock();
 

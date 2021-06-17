@@ -1,13 +1,7 @@
 {
   "replace": false,
   "values": [
-    "honeytech:coal_dust",
-    "honeytech:iron_dust",
-    "honeytech:gold_dust",
-    "honeytech:diamond_dust",
-    "honeytech:aluminium_dust",
-    "honeytech:copper_dust",
-    "honeytech:aluminium_ingot",
-    "honeytech:copper_ingot"
+    "honeytech:raw_aluminium",
+    "honeytech:aluminium_ingot"
   ]
 }

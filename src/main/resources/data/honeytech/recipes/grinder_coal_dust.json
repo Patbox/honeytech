@@ -1,9 +1,0 @@
-{
-  "type": "honeytech:grinder_recipe",
-  "input" : {
-    "item": "minecraft:coal"
-  },
-  "outputItem": "honeytech:coal_dust",
-  "outputAmount": 2,
-  "requiredClicks": 2
-}

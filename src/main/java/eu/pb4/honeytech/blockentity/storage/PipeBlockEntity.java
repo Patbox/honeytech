@@ -1,6 +1,5 @@
 package eu.pb4.honeytech.blockentity.storage;
 
-import eu.pb4.honeytech.block.HTBlocks;
 import eu.pb4.honeytech.block.storage.PipeBlock;
 import eu.pb4.honeytech.blockentity.HTBlockEntities;
 import eu.pb4.honeytech.other.ImplementedInventory;
@@ -12,23 +11,25 @@ import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Tickable;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3f;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.stream.IntStream;
 
-public class PipeBlockEntity extends BlockEntity implements ImplementedInventory, Tickable, VirtualObject {
+public class PipeBlockEntity extends BlockEntity implements ImplementedInventory, VirtualObject {
     DefaultedList<ItemStack> items = DefaultedList.ofSize(1, ItemStack.EMPTY);
     private int tickA = 0;
     private int tickB = 0;
 
-    public PipeBlockEntity() {
-        super(HTBlockEntities.PIPE);
+    public PipeBlockEntity(BlockPos pos, BlockState state) {
+        super(HTBlockEntities.PIPE, pos, state);
     }
 
 
@@ -38,48 +39,51 @@ public class PipeBlockEntity extends BlockEntity implements ImplementedInventory
     }
 
     @Override
-    public CompoundTag toTag(CompoundTag tag) {
-        super.toTag(tag);
-        Inventories.toTag(tag, this.items);
+    public NbtCompound writeNbt(NbtCompound tag) {
+        super.writeNbt(tag);
+        Inventories.writeNbt(tag, this.items);
 
         return tag;
     }
 
     @Override
-    public void fromTag(BlockState state, CompoundTag tag) {
-        super.fromTag(state, tag);
+    public void readNbt(NbtCompound tag) {
+        super.readNbt(tag);
 
         try {
-            Inventories.fromTag(tag, this.items);
+            Inventories.readNbt(tag, this.items);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    @Override
-    public void tick() {
-        this.tickA++;
-        this.tickB++;
-        if (this.tickA == 5) {
-            this.tickA = 0;
-            if (!this.isEmpty()) {
-                if (!insert()) {
-                ((ServerWorld) this.world).spawnParticles(new DustParticleEffect(1, 0, 0, 5f),
-                        this.pos.getX() + 0.5d,
-                        this.pos.getY() + 0.5d,
-                        this.pos.getZ() + 0.5d, 1,0.01f, 0.01f, 0.01f, 0.0f);
+    public static <T extends BlockEntity> void tick(World world, BlockPos pos, BlockState state, T t) {
+        if (!(t instanceof PipeBlockEntity self)) {
+            return;
+        }
+
+        self.tickA++;
+        self.tickB++;
+        if (self.tickA == 5) {
+            self.tickA = 0;
+            if (!self.isEmpty()) {
+                if (!self.insert()) {
+                ((ServerWorld) self.world).spawnParticles(new DustParticleEffect(new Vec3f(1, 0, 0), 5f),
+                        self.pos.getX() + 0.5d,
+                        self.pos.getY() + 0.5d,
+                        self.pos.getZ() + 0.5d, 1,0.01f, 0.01f, 0.01f, 0.0f);
                 }
             }
         }
 
-        if (this.tickB == 20) {
-            this.tickB = 0;
+        if (self.tickB == 20) {
+            self.tickB = 0;
 
-            Direction dir = this.getCachedState().get(PipeBlock.OUTPUT_DIR);
-            ((ServerWorld) this.world).spawnParticles(new DustParticleEffect(1, 1, 1, 2.5f),
-                    this.pos.getX() + 0.5d + ((double) dir.getOffsetX()) / 2.5,
-                    this.pos.getY() + 0.5d + ((double) dir.getOffsetY()) / 2.5,
-                    this.pos.getZ() + 0.5d + ((double) dir.getOffsetZ()) / 2.5, 1,0.01f, 0.01f, 0.01f, 0.2f);
+            Direction dir = self.getCachedState().get(PipeBlock.OUTPUT_DIR);
+            ((ServerWorld) self.world).spawnParticles(new DustParticleEffect(new Vec3f(1, 1, 1), 2.5f),
+                    self.pos.getX() + 0.5d + ((double) dir.getOffsetX()) / 2.5,
+                    self.pos.getY() + 0.5d + ((double) dir.getOffsetY()) / 2.5,
+                    self.pos.getZ() + 0.5d + ((double) dir.getOffsetZ()) / 2.5, 1,0.01f, 0.01f, 0.01f, 0.2f);
         }
     }
 

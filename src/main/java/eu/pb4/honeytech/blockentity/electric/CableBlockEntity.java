@@ -5,34 +5,39 @@ import eu.pb4.honeytech.blockentity.HTBlockEntities;
 import eu.pb4.polymer.interfaces.VirtualObject;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Tickable;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3f;
+import net.minecraft.world.World;
 
 import java.util.ArrayList;
 
-public class CableBlockEntity extends BlockEntity implements Tickable, EnergyHolder, VirtualObject {
+public class CableBlockEntity extends BlockEntity implements EnergyHolder, VirtualObject {
     private double energy = 0;
     private int ticker = 0;
     public static final double MAX_ENERGY_CAPACITY = 512;
 
-    public CableBlockEntity() {
-        super(HTBlockEntities.CABLE);
+    public CableBlockEntity(BlockPos pos, BlockState state) {
+        super(HTBlockEntities.CABLE, pos, state);
     }
 
-    @Override
-    public void tick() {
-        if (this.world.isClient) {
+    public static <T extends BlockEntity> void tick(World world, BlockPos pos, BlockState state, T t) {
+        if (!(t instanceof CableBlockEntity self)) {
+            return;
+        }
+
+        if (self.world.isClient) {
             return;
         }
 
         ArrayList<CableBlockEntity> cables = new ArrayList<>();
 
-        if (this.energy > 0) {
+        if (self.energy > 0) {
             for (Direction dir : Direction.values()) {
-                BlockEntity entity = this.world.getBlockEntity(this.pos.offset(dir));
+                BlockEntity entity = self.world.getBlockEntity(self.pos.offset(dir));
 
                 if (entity instanceof CableBlockEntity) {
                     CableBlockEntity cable = (CableBlockEntity) entity;
@@ -42,7 +47,7 @@ public class CableBlockEntity extends BlockEntity implements Tickable, EnergyHol
         }
 
         if (!cables.isEmpty()) {
-            cables.add(this);
+            cables.add(self);
 
             double power = 0;
 
@@ -56,27 +61,27 @@ public class CableBlockEntity extends BlockEntity implements Tickable, EnergyHol
             }
         }
 
-        this.ticker += 1;
+        self.ticker += 1;
 
-        if (this.ticker == 20) {
-            this.ticker = 0;
-            ((ServerWorld) this.world).spawnParticles(new DustParticleEffect((float) (this.energy / this.getMaxEnergyCapacity()), 0, 0, 2.5f),
-                    this.pos.getX() + 0.5d,
-                    this.pos.getY() + 0.5d,
-                    this.pos.getZ() + 0.5d, 1,0.01f, 0.01f, 0.01f, 0.2f);
+        if (self.ticker == 20) {
+            self.ticker = 0;
+            ((ServerWorld) self.world).spawnParticles(new DustParticleEffect(new Vec3f((float) (self.energy / self.getMaxEnergyCapacity()), 0, 0), 2.5f),
+                    self.pos.getX() + 0.5d,
+                    self.pos.getY() + 0.5d,
+                    self.pos.getZ() + 0.5d, 1,0.01f, 0.01f, 0.01f, 0.2f);
         }
     }
 
     @Override
-    public CompoundTag toTag(CompoundTag tag) {
-        super.toTag(tag);
+    public NbtCompound writeNbt(NbtCompound tag) {
+        super.writeNbt(tag);
         tag.putDouble("Energy", energy);
         return tag;
     }
 
     @Override
-    public void fromTag(BlockState state, CompoundTag tag) {
-        super.fromTag(state, tag);
+    public void readNbt(NbtCompound tag) {
+        super.readNbt(tag);
         this.energy = tag.getDouble("Energy");
     }
 

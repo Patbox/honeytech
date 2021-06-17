@@ -1,7 +1,7 @@
 package eu.pb4.honeytech.block.basic_machines;
 
-import eu.pb4.honeytech.block.machines_common.GrinderBlock;
 import eu.pb4.honeytech.block.HTBlocks;
+import eu.pb4.honeytech.block.machines_common.GrinderBlock;
 import eu.pb4.honeytech.block.machines_common.HandleBlock;
 import eu.pb4.polymer.block.VirtualBlock;
 import net.minecraft.block.Block;

@@ -5,7 +5,6 @@ import eu.pb4.honeytech.blockentity.HTBlockEntities;
 import eu.pb4.honeytech.blockentity.HandlePoweredBlockEntity;
 import eu.pb4.honeytech.blockentity.electric.ElectricOreWasherBlockEntity;
 import eu.pb4.honeytech.item.HTItems;
-import eu.pb4.honeytech.mixin.BlockSoundGroupAccessor;
 import eu.pb4.honeytech.other.HTLootTables;
 import eu.pb4.honeytech.other.HTUtils;
 import eu.pb4.honeytech.other.ImplementedInventory;
@@ -28,7 +27,7 @@ import net.minecraft.item.Items;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameters;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.InventoryS2CPacket;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.particle.ItemStackParticleEffect;
@@ -74,13 +73,13 @@ public class OreWasherBlockEntity extends LockableContainerBlockEntity implement
     public final Set<OreWasherGui> openGuis = new HashSet<>();
     protected DefaultedList<ItemStack> items;
 
-    public OreWasherBlockEntity() {
-        super(HTBlockEntities.ORE_WASHER);
+    public OreWasherBlockEntity(BlockPos pos, BlockState state) {
+        super(HTBlockEntities.ORE_WASHER, pos, state);
         this.items = DefaultedList.ofSize(18, ItemStack.EMPTY);
     }
 
-    public OreWasherBlockEntity(BlockEntityType<?> blockEntityType) {
-        super(blockEntityType);
+    public OreWasherBlockEntity(BlockEntityType<?> blockEntityType, BlockPos pos, BlockState state) {
+        super(blockEntityType, pos, state);
         this.items = DefaultedList.ofSize(27, ItemStack.EMPTY);
     }
 
@@ -100,19 +99,19 @@ public class OreWasherBlockEntity extends LockableContainerBlockEntity implement
     }
 
     @Override
-    public CompoundTag toTag(CompoundTag tag) {
-        super.toTag(tag);
-        Inventories.toTag(tag, this.items);
+    public NbtCompound writeNbt(NbtCompound tag) {
+        super.writeNbt(tag);
+        Inventories.writeNbt(tag, this.items);
 
         return tag;
     }
 
     @Override
-    public void fromTag(BlockState state, CompoundTag tag) {
-        super.fromTag(state, tag);
+    public void readNbt(NbtCompound tag) {
+        super.readNbt(tag);
 
         try {
-            Inventories.fromTag(tag, this.items);
+            Inventories.readNbt(tag, this.items);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -184,7 +183,7 @@ public class OreWasherBlockEntity extends LockableContainerBlockEntity implement
             SoundEvent event = SoundEvents.BLOCK_GRAVEL_BREAK;
             if (copy.getItem() instanceof BlockItem) {
                 Block block = ((BlockItem) copy.getItem()).getBlock();
-                event = ((BlockSoundGroupAccessor) block.getSoundGroup(block.getDefaultState())).getBreakSoundServer();
+                event = block.getSoundGroup(block.getDefaultState()).getBreakSound();
             }
 
             if (this.offset < 0) {
@@ -265,7 +264,7 @@ public class OreWasherBlockEntity extends LockableContainerBlockEntity implement
 
             if (slot instanceof OutputSlot) {
                 this.player.networkHandler.sendPacket(new InventoryS2CPacket(this.syncId, this.screenHandler.getStacks()));
-                this.player.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(-1, -1, this.player.inventory.getCursorStack()));
+                this.player.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(-1, -1, this.screenHandler.getCursorStack()));
             }
 
             return super.onAnyClick(index, type, action);

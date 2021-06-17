@@ -5,28 +5,30 @@ import eu.pb4.honeytech.blockentity.EnergyHolder;
 import eu.pb4.honeytech.blockentity.HTBlockEntities;
 import eu.pb4.honeytech.blockentity.machines_common.GrinderBlockEntity;
 import net.minecraft.block.BlockState;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Tickable;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.World;
 
-public class ElectricGrinderBlockEntity extends GrinderBlockEntity implements EnergyHolder, Tickable {
+public class ElectricGrinderBlockEntity extends GrinderBlockEntity implements EnergyHolder {
     public double energy;
     public int ticker;
 
-    public ElectricGrinderBlockEntity() {
-        super(HTBlockEntities.ELECTRIC_GRINDER);
+    public ElectricGrinderBlockEntity(BlockPos pos, BlockState state) {
+        super(HTBlockEntities.ELECTRIC_GRINDER, pos, state);
     }
 
     @Override
-    public void fromTag(BlockState state, CompoundTag tag) {
-        super.fromTag(state, tag);
+    public void readNbt(NbtCompound tag) {
+        super.readNbt(tag);
         this.energy = tag.getDouble("Energy");
     }
 
     @Override
-    public CompoundTag toTag(CompoundTag tag) {
-        super.toTag(tag);
+    public NbtCompound writeNbt(NbtCompound tag) {
+        super.writeNbt(tag);
         tag.putDouble("Energy", this.energy);
         return tag;
     }
@@ -61,24 +63,27 @@ public class ElectricGrinderBlockEntity extends GrinderBlockEntity implements En
         return isDraining ? 0 : ((MachineBlock) this.getCachedState().getBlock()).getMaxEnergyInput();
     }
 
-    @Override
-    public void tick() {
-        if (this.world.isClient) {
+    public static <T extends BlockEntity> void tick(World world, BlockPos pos, BlockState state, T t) {
+        if (!(t instanceof ElectricGrinderBlockEntity self)) {
             return;
         }
 
-        this.ticker++;
-        EnergyHolder.takeEnergyFromSources(this, this.world, this.pos, ((MachineBlock) this.getCachedState().getBlock()).getMaxEnergyInput());
+        if (self.world.isClient) {
+            return;
+        }
 
-        int ticksRequired = (int) (10 / ((MachineBlock) this.getCachedState().getBlock()).getTier().speed);
+        self.ticker++;
+        EnergyHolder.takeEnergyFromSources(self, self.world, self.pos, ((MachineBlock) self.getCachedState().getBlock()).getMaxEnergyInput());
 
-        if (this.ticker >= ticksRequired) {
-            this.ticker = 0;
-            double use = ((MachineBlock) this.getCachedState().getBlock()).getPerTickEnergyUsage() * ticksRequired;
-            if (this.energy >= use) {
-                ActionResult result = this.useHandle(this.getCachedState(), this.getWorld(), this.getPos(), null, null, null);
+        int ticksRequired = (int) (10 / ((MachineBlock) self.getCachedState().getBlock()).getTier().speed);
+
+        if (self.ticker >= ticksRequired) {
+            self.ticker = 0;
+            double use = ((MachineBlock) self.getCachedState().getBlock()).getPerTickEnergyUsage() * ticksRequired;
+            if (self.energy >= use) {
+                ActionResult result = self.useHandle(self.getCachedState(), self.getWorld(), self.getPos(), null, null, null);
                 if (result == ActionResult.SUCCESS) {
-                    this.energy -= use;
+                    self.energy -= use;
                 }
             }
         }

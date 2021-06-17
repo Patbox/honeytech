@@ -4,8 +4,6 @@
   "package": "eu.pb4.honeytech.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "BlockSoundGroupAccessor",
-    "IngredientAccessor",
     "ServerPlayerInteractionManagerMixin",
     "SmithingRecipeAccessor",
     "wrench.AbstractFurnaceBlockMixin",

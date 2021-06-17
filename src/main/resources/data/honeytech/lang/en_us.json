@@ -31,13 +31,8 @@
   "item.honeytech.ammeter": "Ammeter",
 
   "item.honeytech.diamond_dust": "Diamond Dust",
-  "item.honeytech.gold_dust": "Gold Dust",
-  "item.honeytech.iron_dust": "Iron Dust",
-  "item.honeytech.coal_dust": "Coal Dust",
-  "item.honeytech.copper_dust": "Copper Dust",
-  "item.honeytech.aluminium_dust": "Aluminium Dust",
+  "item.honeytech.raw_aluminium": "Raw Aluminium Ore",
 
-  "item.honeytech.copper_ingot": "Copper Ingot",
   "item.honeytech.aluminium_ingot": "Aluminium Ingot",
 
   "item.honeytech.copper_wire": "Copper Wire",

@@ -1,8 +1,8 @@
 package eu.pb4.honeytech.other;
 
 import eu.pb4.honeytech.HoneyTechMod;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -19,11 +19,11 @@ public class HTUtils {
         return new Identifier(HoneyTechMod.ID, path);
     }
 
-    public static CompoundTag getHeadSkullOwnerTag(String value) {
-        CompoundTag skullOwner = new CompoundTag();
-        CompoundTag properties = new CompoundTag();
-        CompoundTag data = new CompoundTag();
-        ListTag textures = new ListTag();
+    public static NbtCompound getHeadSkullOwnerTag(String value) {
+        NbtCompound skullOwner = new NbtCompound();
+        NbtCompound properties = new NbtCompound();
+        NbtCompound data = new NbtCompound();
+        NbtList textures = new NbtList();
         textures.add(data);
 
         data.putString("Value", value);

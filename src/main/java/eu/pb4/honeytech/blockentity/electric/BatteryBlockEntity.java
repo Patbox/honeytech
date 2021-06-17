@@ -7,36 +7,41 @@ import eu.pb4.honeytech.blockentity.HTBlockEntities;
 import eu.pb4.polymer.interfaces.VirtualObject;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.Tickable;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.World;
 
-public class BatteryBlockEntity extends BlockEntity implements Tickable, EnergyHolder, VirtualObject {
+public class BatteryBlockEntity extends BlockEntity implements EnergyHolder, VirtualObject {
     private double energy = 0;
 
-    public BatteryBlockEntity() {
-        super(HTBlockEntities.BATTERY);
+    public BatteryBlockEntity(BlockPos pos, BlockState state) {
+        super(HTBlockEntities.BATTERY, pos, state);
     }
 
-    @Override
-    public void tick() {
+
+    public static <T extends BlockEntity> void tick(World world, BlockPos pos, BlockState state, T t) {
+        if (!(t instanceof BatteryBlockEntity battery)) {
+            return;
+        }
+
         for (Direction dir : Direction.values()) {
-            BlockEntity entity = this.world.getBlockEntity(pos.offset(dir));
+            BlockEntity entity = world.getBlockEntity(pos.offset(dir));
             if (entity instanceof EnergyHolder) {
                 EnergyHolder holder = (EnergyHolder) entity;
                 double proc = holder.getEnergyAmount() / holder.getMaxEnergyCapacity();
 
-                if (holder.isEnergySource() && !this.isFullEnergy() && proc > 0.65) {
+                if (holder.isEnergySource() && !battery.isFullEnergy() && proc > 0.65) {
                     double newAmount = Math.max(0,
-                            Math.min(this.getMaxEnergyTransferCapacity(dir.getOpposite(), false),
-                                    this.getMaxEnergyCapacity() - this.getEnergyAmount()));
+                            Math.min(battery.getMaxEnergyTransferCapacity(dir.getOpposite(), false),
+                                    battery.getMaxEnergyCapacity() - battery.getEnergyAmount()));
                     double tr = holder.transferEnergy(-newAmount, dir.getOpposite());
-                    this.setEnergyAmount(this.getEnergyAmount() - tr);
+                    battery.setEnergyAmount(battery.getEnergyAmount() - tr);
                 } else if (!holder.isFullEnergy() && holder.isEnergyConsumer() && proc < 0.60) {
-                    double amount = Math.min(this.getMaxEnergyTransferCapacity(dir.getOpposite(), true), this.getEnergyAmount());
+                    double amount = Math.min(battery.getMaxEnergyTransferCapacity(dir.getOpposite(), true), battery.getEnergyAmount());
                     if (amount >= 0.001) {
                         double tr = holder.transferEnergy(amount, dir.getOpposite());
-                        this.setEnergyAmount(this.getEnergyAmount() - tr);
+                        battery.setEnergyAmount(battery.getEnergyAmount() - tr);
                     }
                 }
             }
@@ -44,15 +49,15 @@ public class BatteryBlockEntity extends BlockEntity implements Tickable, EnergyH
     }
 
     @Override
-    public CompoundTag toTag(CompoundTag tag) {
-        super.toTag(tag);
+    public NbtCompound writeNbt(NbtCompound tag) {
+        super.writeNbt(tag);
         tag.putDouble("Energy", energy);
         return tag;
     }
 
     @Override
-    public void fromTag(BlockState state, CompoundTag tag) {
-        super.fromTag(state, tag);
+    public void readNbt(NbtCompound tag) {
+        super.readNbt(tag);
         this.energy = tag.getDouble("Energy");
     }
 

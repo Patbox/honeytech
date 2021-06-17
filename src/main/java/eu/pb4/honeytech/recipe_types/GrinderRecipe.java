@@ -40,11 +40,7 @@ public class GrinderRecipe implements Recipe<Inventory> {
         for (int x = 0; x < inv.size(); x++) {
             ItemStack stack = inv.getStack(x).copy();
             if (!stack.isEmpty()) {
-                if (this.input.test(stack)) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return this.input.test(stack);
             }
         }
         return false;
@@ -83,7 +79,6 @@ public class GrinderRecipe implements Recipe<Inventory> {
         return this.requiredPower;
     }
 
-    @Override
     public DefaultedList<Ingredient> getPreviewInputs() {
         return DefaultedList.ofSize(1, this.input);
     }

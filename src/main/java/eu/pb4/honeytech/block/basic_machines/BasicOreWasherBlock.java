@@ -3,18 +3,14 @@ package eu.pb4.honeytech.block.basic_machines;
 import eu.pb4.honeytech.block.HTBlocks;
 import eu.pb4.honeytech.block.machines_common.HandleBlock;
 import eu.pb4.honeytech.block.machines_common.OreWasherBlock;
-import eu.pb4.honeytech.blockentity.machines_common.OreWasherBlockEntity;
 import eu.pb4.polymer.block.VirtualBlock;
 import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 public class BasicOreWasherBlock extends OreWasherBlock implements VirtualBlock {
     public BasicOreWasherBlock(Settings settings) {
@@ -33,13 +29,10 @@ public class BasicOreWasherBlock extends OreWasherBlock implements VirtualBlock 
 
     @Override
     public BlockState getVirtualBlockState(BlockState state) {
-        return Blocks.CAULDRON.getDefaultState().with(CauldronBlock.LEVEL, state.get(WATER));
-    }
-
-    @Nullable
-    @Override
-    public BlockEntity createBlockEntity(BlockView world) {
-        return new OreWasherBlockEntity();
+        int water = state.get(WATER);
+        return water == 0
+                ? Blocks.CAULDRON.getDefaultState()
+                : Blocks.WATER_CAULDRON.getDefaultState().with(LeveledCauldronBlock.LEVEL, water);
     }
 
     @Override
@@ -63,6 +56,6 @@ public class BasicOreWasherBlock extends OreWasherBlock implements VirtualBlock 
 
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
-        world.setBlockState(pos.up(), HTBlocks.BASIC_ORE_WASHER_HANDLE.getDefaultState().with(HorizontalFacingBlock.FACING, Direction.fromRotation(placer.yaw).getOpposite()), 3);
+        world.setBlockState(pos.up(), HTBlocks.BASIC_ORE_WASHER_HANDLE.getDefaultState().with(HorizontalFacingBlock.FACING, Direction.fromRotation(placer.getYaw()).getOpposite()), 3);
     }
 }
