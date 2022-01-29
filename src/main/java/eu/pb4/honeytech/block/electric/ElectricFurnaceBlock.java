@@ -1,11 +1,11 @@
 package eu.pb4.honeytech.block.electric;
 
 import com.google.common.collect.ImmutableList;
-import eu.pb4.honeytech.block.MachineBlock;
+import eu.pb4.honeytech.block.ElectricMachine;
 import eu.pb4.honeytech.block.WrenchableBlock;
 import eu.pb4.honeytech.blockentity.electric.ElectricFurnaceBlockEntity;
 import eu.pb4.honeytech.other.HTTier;
-import eu.pb4.polymer.block.VirtualHeadBlock;
+import eu.pb4.polymer.api.block.PolymerHeadBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-public class ElectricFurnaceBlock extends Block implements VirtualHeadBlock, BlockEntityProvider, MachineBlock, WrenchableBlock {
+public class ElectricFurnaceBlock extends Block implements PolymerHeadBlock, BlockEntityProvider, ElectricMachine, WrenchableBlock {
     public final HTTier tier;
 
     public ElectricFurnaceBlock(Settings settings, HTTier tier) {
@@ -61,17 +61,17 @@ public class ElectricFurnaceBlock extends Block implements VirtualHeadBlock, Blo
     }
 
     @Override
-    public Block getVirtualBlock() {
+    public Block getPolymerBlock(BlockState state) {
         return Blocks.PLAYER_HEAD;
     }
 
     @Override
-    public BlockState getVirtualBlockState(BlockState state) {
+    public BlockState getPolymerBlockState(BlockState state) {
         return Blocks.PLAYER_HEAD.getDefaultState().with(Properties.ROTATION, state.get(Properties.HORIZONTAL_FACING).getOpposite().getHorizontal() * 4);
     }
 
     @Override
-    public String getVirtualHeadSkin(BlockState state) {
+    public String getPolymerSkinValue(BlockState state) {
         return "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODI5NmYwOTI1MjRhZTljMmEyZTg3ODgxY2I0MTVhZGIzNThkNmNiNzczYzg1ZGM5NzIwMmZlZmI3NTRjMSJ9fX0=";
     }
 
@@ -97,27 +97,27 @@ public class ElectricFurnaceBlock extends Block implements VirtualHeadBlock, Blo
     }
 
     @Override
-    public double getPerTickEnergyUsage() {
+    public long getPerTickEnergyUsage() {
         return 128;
     }
 
     @Override
-    public double getPerTickEnergyProduction() {
+    public long getPerTickEnergyProduction() {
         return 0;
     }
 
     @Override
-    public double getMaxEnergyOutput() {
+    public long getMaxEnergyOutput() {
         return 0;
     }
 
     @Override
-    public double getMaxEnergyInput() {
+    public long getMaxEnergyInput() {
         return 256;
     }
 
     @Override
-    public double getCapacity() {
+    public long getCapacity() {
         return this.tier.energyCapacity;
     }
 

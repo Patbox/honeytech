@@ -3,7 +3,7 @@ package eu.pb4.honeytech.block.storage;
 import com.google.common.collect.ImmutableList;
 import eu.pb4.honeytech.block.WrenchableBlock;
 import eu.pb4.honeytech.blockentity.storage.PipeBlockEntity;
-import eu.pb4.polymer.block.VirtualBlock;
+import eu.pb4.polymer.api.block.PolymerBlock;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-public class PipeBlock extends Block implements Waterloggable, BlockEntityProvider, VirtualBlock, WrenchableBlock {
+public class PipeBlock extends Block implements Waterloggable, BlockEntityProvider, PolymerBlock, WrenchableBlock {
     public static DirectionProperty INPUT_DIR = DirectionProperty.of("input", Direction.values());
     public static DirectionProperty OUTPUT_DIR = DirectionProperty.of("output", Direction.values());
 
@@ -56,13 +56,8 @@ public class PipeBlock extends Block implements Waterloggable, BlockEntityProvid
     }
 
     @Override
-    public Block getVirtualBlock() {
+    public Block getPolymerBlock(BlockState state) {
         return Blocks.DIORITE_WALL;
-    }
-
-    @Override
-    public BlockState getDefaultVirtualBlockState() {
-        return Blocks.DIORITE_WALL.getDefaultState();
     }
 
     @Override
@@ -138,7 +133,7 @@ public class PipeBlock extends Block implements Waterloggable, BlockEntityProvid
     }
 
     @Override
-    public BlockState getVirtualBlockState(BlockState state) {
+    public BlockState getPolymerBlockState(BlockState state) {
         Direction input = state.get(INPUT_DIR);
         Direction output = state.get(OUTPUT_DIR);
 
@@ -176,7 +171,7 @@ public class PipeBlock extends Block implements Waterloggable, BlockEntityProvid
     @Override
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState newState, WorldAccess world, BlockPos pos, BlockPos posFrom) {
         if (state.get(Properties.WATERLOGGED)) {
-            world.getFluidTickScheduler().schedule(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+            world.createAndScheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
         }
 
         return super.getStateForNeighborUpdate(state, direction, newState, world, pos, posFrom);

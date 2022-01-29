@@ -7,10 +7,10 @@ public enum HTTier {
     GOLD(3, 8192, 1.6, 5);
 
     public final int level;
-    public final double energyCapacity;
+    public final long energyCapacity;
     public final double energyMultiplier;
     public final double speed;
-    HTTier(int lvl, double energyCapacity, double energyMultiplier, double speed) {
+    HTTier(int lvl, long energyCapacity, double energyMultiplier, double speed) {
         this.level = lvl;
         this.energyCapacity = energyCapacity;
         this.energyMultiplier = energyMultiplier;

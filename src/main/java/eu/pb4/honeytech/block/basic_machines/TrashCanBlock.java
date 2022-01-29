@@ -2,7 +2,7 @@ package eu.pb4.honeytech.block.basic_machines;
 
 import eu.pb4.honeytech.blockentity.HandlePoweredBlockEntity;
 import eu.pb4.honeytech.blockentity.basic_machines.TrashCanBlockEntity;
-import eu.pb4.polymer.block.VirtualHeadBlock;
+import eu.pb4.polymer.api.block.PolymerHeadBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
@@ -18,7 +18,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class TrashCanBlock extends Block implements BlockEntityProvider, HandlePoweredBlockEntity, VirtualHeadBlock {
+public class TrashCanBlock extends Block implements BlockEntityProvider, HandlePoweredBlockEntity, PolymerHeadBlock {
     public TrashCanBlock(Settings settings) {
         super(settings);
     }
@@ -44,7 +44,7 @@ public class TrashCanBlock extends Block implements BlockEntityProvider, HandleP
         if (state.getBlock() != newState.getBlock()) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof TrashCanBlockEntity) {
-                world.updateComparators(pos,this);
+                world.updateComparators(pos, this);
 
                 for (TrashCanBlockEntity.TrashCanGui gui : ((TrashCanBlockEntity) blockEntity).openGuis) {
                     gui.close(false);
@@ -55,19 +55,18 @@ public class TrashCanBlock extends Block implements BlockEntityProvider, HandleP
     }
 
 
-
     @Override
     public ActionResult useHandle(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         return ActionResult.PASS;
     }
 
     @Override
-    public String getVirtualHeadSkin(BlockState state) {
+    public String getPolymerSkinValue(BlockState state) {
         return "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDQxZjRlZGJjNjhjOTA2MTM1NTI0MmJkNzNlZmZjOTI5OWEzMjUyYjlmMTFlODJiNWYxZWM3YjNiNmFjMCJ9fX0=";
     }
 
     @Override
-    public Block getVirtualBlock() {
+    public Block getPolymerBlock(BlockState state) {
         return Blocks.PLAYER_HEAD;
     }
 

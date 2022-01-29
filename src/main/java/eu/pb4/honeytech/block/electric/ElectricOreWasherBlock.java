@@ -1,10 +1,10 @@
 package eu.pb4.honeytech.block.electric;
 
-import eu.pb4.honeytech.block.MachineBlock;
+import eu.pb4.honeytech.block.ElectricMachine;
 import eu.pb4.honeytech.block.machines_common.OreWasherBlock;
 import eu.pb4.honeytech.blockentity.electric.ElectricOreWasherBlockEntity;
 import eu.pb4.honeytech.other.HTTier;
-import eu.pb4.polymer.block.VirtualHeadBlock;
+import eu.pb4.polymer.api.block.PolymerHeadBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -15,7 +15,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class ElectricOreWasherBlock extends OreWasherBlock implements VirtualHeadBlock, MachineBlock {
+public class ElectricOreWasherBlock extends OreWasherBlock implements PolymerHeadBlock, ElectricMachine {
     public final HTTier tier;
     public ElectricOreWasherBlock(Settings settings, HTTier tier) {
         super(settings);
@@ -28,37 +28,37 @@ public class ElectricOreWasherBlock extends OreWasherBlock implements VirtualHea
     }
 
     @Override
-    public String getVirtualHeadSkin(BlockState state) {
+    public String getPolymerSkinValue(BlockState state) {
         return "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWY1ZDc0NjY4YmRiNTRkMzRjNDgyNThkYjU2YTIxOGFjZGIzYjBmODMwOTZkYTY5MjIzZTZhMGMzNmM1ODZkIn19fQ==";
     }
 
     @Override
-    public Block getVirtualBlock() {
+    public Block getPolymerBlock(BlockState state) {
         return Blocks.PLAYER_HEAD;
     }
 
     @Override
-    public double getPerTickEnergyUsage() {
+    public long getPerTickEnergyUsage() {
         return 64;
     }
 
     @Override
-    public double getPerTickEnergyProduction() {
+    public long getPerTickEnergyProduction() {
         return 0;
     }
 
     @Override
-    public double getMaxEnergyOutput() {
+    public long getMaxEnergyOutput() {
         return 0;
     }
 
     @Override
-    public double getMaxEnergyInput() {
+    public long getMaxEnergyInput() {
         return tier.energyCapacity / 16;
     }
 
     @Override
-    public double getCapacity() {
+    public long getCapacity() {
         return tier.energyCapacity;
     }
 

@@ -1,14 +1,15 @@
 package eu.pb4.honeytech.block.electric;
 
-import eu.pb4.honeytech.block.MachineBlock;
+import eu.pb4.honeytech.block.ElectricMachine;
 import eu.pb4.honeytech.blockentity.electric.AutoCrafterBlockEntity;
 import eu.pb4.honeytech.blockentity.electric.CoalGeneratorBlockEntity;
 import eu.pb4.honeytech.other.HTTier;
 import eu.pb4.honeytech.other.HTUtils;
-import eu.pb4.polymer.block.VirtualHeadBlock;
+import eu.pb4.polymer.api.block.PolymerHeadBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
@@ -23,7 +24,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class AutoCrafterBlock extends Block implements VirtualHeadBlock, BlockEntityProvider, MachineBlock {
+public class AutoCrafterBlock extends Block implements PolymerHeadBlock, BlockEntityProvider, ElectricMachine {
     private final HTTier tier;
 
     public AutoCrafterBlock(Settings settings) {
@@ -59,27 +60,27 @@ public class AutoCrafterBlock extends Block implements VirtualHeadBlock, BlockEn
     }
 
     @Override
-    public double getPerTickEnergyUsage() {
+    public long getPerTickEnergyUsage() {
         return 32;
     }
 
     @Override
-    public double getPerTickEnergyProduction() {
+    public long getPerTickEnergyProduction() {
         return 0;
     }
 
     @Override
-    public double getMaxEnergyOutput() {
+    public long getMaxEnergyOutput() {
         return 32;
     }
 
     @Override
-    public double getMaxEnergyInput() {
+    public long getMaxEnergyInput() {
         return this.tier.energyCapacity / 16;
     }
 
     @Override
-    public double getCapacity() {
+    public long getCapacity() {
         return this.tier.energyCapacity;
     }
 
@@ -89,7 +90,7 @@ public class AutoCrafterBlock extends Block implements VirtualHeadBlock, BlockEn
     }
 
     @Override
-    public String getVirtualHeadSkin(BlockState state) {
+    public String getPolymerSkinValue(BlockState state) {
         return HTUtils.INVALID_TEXTURE;
     }
 
@@ -103,5 +104,10 @@ public class AutoCrafterBlock extends Block implements VirtualHeadBlock, BlockEn
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
         return AutoCrafterBlockEntity::tick;
+    }
+
+    @Override
+    public Block getPolymerBlock(BlockState state) {
+        return Blocks.PLAYER_HEAD;
     }
 }

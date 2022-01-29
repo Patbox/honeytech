@@ -1,4 +1,7 @@
 {
+  "mod.honeytech.name": "Honeytech",
+
+
   "block.honeytech.basic_grinder": "Basic Grinder",
   "block.honeytech.table_saw": "Table Saw",
   "block.honeytech.basic_ore_washer": "Basic Ore Washer",

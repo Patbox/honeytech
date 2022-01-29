@@ -4,13 +4,11 @@ import eu.pb4.honeytech.block.machines_common.GrinderBlock;
 import eu.pb4.honeytech.blockentity.EnergyHolder;
 import eu.pb4.honeytech.blockentity.HTBlockEntities;
 import eu.pb4.honeytech.blockentity.HandlePoweredBlockEntity;
-import eu.pb4.honeytech.item.HTItems;
 import eu.pb4.honeytech.other.HTUtils;
 import eu.pb4.honeytech.other.ImplementedInventory;
 import eu.pb4.honeytech.other.OutputSlot;
 import eu.pb4.honeytech.other.RecipeBooks;
 import eu.pb4.honeytech.recipe_types.GrinderRecipe;
-import eu.pb4.polymer.interfaces.VirtualObject;
 import eu.pb4.sgui.api.ClickType;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
@@ -27,7 +25,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.InventoryS2CPacket;
-import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.particle.ItemStackParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.screen.ScreenHandler;
@@ -40,16 +37,13 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.LiteralText;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,12 +51,11 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-public class GrinderBlockEntity extends LockableContainerBlockEntity implements SidedInventory, HandlePoweredBlockEntity, VirtualObject {
+public class GrinderBlockEntity extends LockableContainerBlockEntity implements SidedInventory, HandlePoweredBlockEntity {
     private final static int[] SLOTS = new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};
-
+    public final Set<GrinderGui> openGuis = new HashSet<>();
     private final ImplementedInventory input;
     private final ImplementedInventory output;
-    public final Set<GrinderGui> openGuis = new HashSet<>();
     private int click = 0;
     private double offset = -1;
 
@@ -77,7 +70,7 @@ public class GrinderBlockEntity extends LockableContainerBlockEntity implements 
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound tag) {
+    public void writeNbt(NbtCompound tag) {
         super.writeNbt(tag);
 
         NbtCompound input = new NbtCompound();
@@ -88,8 +81,6 @@ public class GrinderBlockEntity extends LockableContainerBlockEntity implements 
 
         tag.put("input", input);
         tag.put("output", output);
-
-        return tag;
     }
 
     @Override
@@ -127,7 +118,6 @@ public class GrinderBlockEntity extends LockableContainerBlockEntity implements 
             gui.open();
         }
     }
-
 
 
     @Override
@@ -227,10 +217,10 @@ public class GrinderBlockEntity extends LockableContainerBlockEntity implements 
                             this.offset = this.getCachedState().getCollisionShape(this.world, this.pos).getMax(Direction.Axis.Y);
                         }
 
-                         ((ServerWorld) world).spawnParticles(new ItemStackParticleEffect(ParticleTypes.ITEM, stack),
+                        ((ServerWorld) world).spawnParticles(new ItemStackParticleEffect(ParticleTypes.ITEM, stack),
                                 pos.getX() + 0.5d,
                                 pos.getY() + this.offset,
-                                pos.getZ() + 0.5d, 20,0.1f, 0.1f, 0.1f, 0.1f);
+                                pos.getZ() + 0.5d, 20, 0.1f, 0.1f, 0.1f, 0.1f);
 
                         SoundEvent event = SoundEvents.BLOCK_STONE_BREAK;
                         if (stack.getItem() instanceof BlockItem) {
@@ -254,8 +244,7 @@ public class GrinderBlockEntity extends LockableContainerBlockEntity implements 
     public static class GrinderGui extends SimpleGui {
         private final GrinderBlockEntity blockEntity;
         private final int grinderPower;
-        private final double energyLast = -1;
-        private static final Style BATTERY_STYLE = Style.EMPTY.withItalic(false).withColor(Formatting.GRAY);
+        private final long energyLast = -1;
 
 
         public GrinderGui(GrinderBlockEntity blockEntity, ServerPlayerEntity player) {
@@ -264,6 +253,26 @@ public class GrinderBlockEntity extends LockableContainerBlockEntity implements 
             this.setTitle(new TranslatableText(block.getTranslationKey()));
             this.blockEntity = blockEntity;
             this.grinderPower = block.grindingPower;
+
+            for (int x = 0; x < 9; x++) {
+                this.setSlotRedirect((x / 3) * 9 + x % 3, new Slot(blockEntity.input, x, 0, 0));
+                this.setSlot((x / 3) * 9 + x % 3 + 3, new GuiElementBuilder(Items.GRAY_STAINED_GLASS_PANE).setName(new LiteralText("")));
+                this.setSlotRedirect((x / 3) * 9 + x % 3 + 6, new OutputSlot(blockEntity.output, x, 0, 0));
+            }
+
+            this.setSlot(4 + 9 * 2,
+                    new GuiElementBuilder(Items.KNOWLEDGE_BOOK)
+                            .setName(HTUtils.getText("gui", "show_recipes"))
+                            .setCallback((index, type, action) -> {
+                                this.close(false);
+
+                                RecipeBooks.openGrinderRecipeBook(player, this.grinderPower, () -> blockEntity.openInventory(player));
+                            }));
+
+            if (this.blockEntity instanceof EnergyHolder energyHolder) {
+                this.setSlot(13, HTUtils.createBatteryIcon(energyHolder.getEnergy()));
+            }
+
         }
 
         @Override
@@ -271,52 +280,16 @@ public class GrinderBlockEntity extends LockableContainerBlockEntity implements 
             Slot slot = this.getSlotRedirect(index);
 
             if (slot instanceof OutputSlot) {
-                this.player.networkHandler.sendPacket(new InventoryS2CPacket(this.syncId, this.screenHandler.getStacks()));
-                this.player.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(-1, -1, this.screenHandler.getCursorStack()));
+                this.player.networkHandler.sendPacket(new InventoryS2CPacket(this.syncId, this.screenHandler.nextRevision(), this.screenHandler.getStacks(), this.screenHandler.getCursorStack()));
             }
 
             return super.onAnyClick(index, type, action);
         }
 
         @Override
-        public void onUpdate(boolean firstUpdate) {
-            for (int x = 0; x < 9; x++) {
-                this.setSlotRedirect((x / 3) * 9 + x % 3, new Slot(blockEntity.input, x, 0, 0));
-                if (firstUpdate) {
-                    this.setSlot((x / 3) * 9 + x % 3 + 3, new GuiElementBuilder(Items.GRAY_STAINED_GLASS_PANE).setName(new LiteralText("")));
-                }
-                this.setSlotRedirect((x / 3) * 9 + x % 3 + 6, new OutputSlot(blockEntity.output, x, 0, 0));
-            }
-
-            if (firstUpdate) {
-                this.setSlot(4 + 9 * 2,
-                        new GuiElementBuilder(Items.KNOWLEDGE_BOOK)
-                                .setName(HTUtils.getText("gui", "show_recipes"))
-                                .setCallback((index, type, action) -> {
-                                    this.close(false);
-
-                                    RecipeBooks.openGrinderRecipeBook(player, this.grinderPower, () -> blockEntity.openInventory(player));
-                                }));
-
-                if (this.blockEntity instanceof EnergyHolder) {
-                    this.setSlot(13, new GuiElementBuilder(HTItems.BATTERY).setName(HTUtils.getText("gui", "battery_charge",
-                            new LiteralText(HTUtils.formatEnergy(((EnergyHolder) this.blockEntity).getEnergyAmount())).formatted(Formatting.WHITE),
-                            new LiteralText(HTUtils.formatEnergy(((EnergyHolder) this.blockEntity).getMaxEnergyCapacity())).formatted(Formatting.WHITE),
-                            new LiteralText(HTUtils.dtt(((EnergyHolder) this.blockEntity).getEnergyAmount() / ((EnergyHolder) this.blockEntity).getMaxEnergyCapacity() * 100) + "%").formatted(Formatting.WHITE)
-                    ).setStyle(BATTERY_STYLE)));
-                }
-            }
-            super.onUpdate(firstUpdate);
-        }
-
-        @Override
         public void onTick() {
-            if (this.blockEntity instanceof EnergyHolder && !MathHelper.approximatelyEquals(((EnergyHolder) this.blockEntity).getEnergyAmount(), this.energyLast)) {
-                this.getSlot(13).getItemStack().setCustomName(HTUtils.getText("gui", "battery_charge",
-                        new LiteralText(HTUtils.formatEnergy(((EnergyHolder) this.blockEntity).getEnergyAmount())).formatted(Formatting.WHITE),
-                        new LiteralText(HTUtils.formatEnergy(((EnergyHolder) this.blockEntity).getMaxEnergyCapacity())).formatted(Formatting.WHITE),
-                        new LiteralText(HTUtils.dtt(((EnergyHolder) this.blockEntity).getEnergyAmount() / ((EnergyHolder) this.blockEntity).getMaxEnergyCapacity() * 100) + "%").formatted(Formatting.WHITE)
-                ).setStyle(BATTERY_STYLE));
+            if (this.blockEntity instanceof EnergyHolder energyHolder && energyHolder.getEnergy().getAmount() != this.energyLast) {
+                this.setSlot(13, HTUtils.createBatteryIcon(energyHolder.getEnergy()));
             }
 
             super.onTick();

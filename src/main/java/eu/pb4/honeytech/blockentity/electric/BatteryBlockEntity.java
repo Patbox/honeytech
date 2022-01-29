@@ -1,22 +1,24 @@
 package eu.pb4.honeytech.blockentity.electric;
 
-import eu.pb4.honeytech.block.MachineBlock;
+import eu.pb4.honeytech.block.ElectricMachine;
 import eu.pb4.honeytech.block.electric.BatteryBlock;
 import eu.pb4.honeytech.blockentity.EnergyHolder;
 import eu.pb4.honeytech.blockentity.HTBlockEntities;
-import eu.pb4.polymer.interfaces.VirtualObject;
+import eu.pb4.honeytech.other.HTUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
+import team.reborn.energy.api.EnergyStorage;
+import team.reborn.energy.api.base.SimpleEnergyStorage;
 
-public class BatteryBlockEntity extends BlockEntity implements EnergyHolder, VirtualObject {
-    private double energy = 0;
+public class BatteryBlockEntity extends BlockEntity implements EnergyHolder {
+    public final SimpleEnergyStorage energyStorage;
 
     public BatteryBlockEntity(BlockPos pos, BlockState state) {
         super(HTBlockEntities.BATTERY, pos, state);
+        this.energyStorage = HTUtils.createEnergyStorage(this, ElectricMachine.of(state));
     }
 
 
@@ -25,7 +27,7 @@ public class BatteryBlockEntity extends BlockEntity implements EnergyHolder, Vir
             return;
         }
 
-        for (Direction dir : Direction.values()) {
+        /*for (Direction dir : Direction.values()) {
             BlockEntity entity = world.getBlockEntity(pos.offset(dir));
             if (entity instanceof EnergyHolder) {
                 EnergyHolder holder = (EnergyHolder) entity;
@@ -45,33 +47,27 @@ public class BatteryBlockEntity extends BlockEntity implements EnergyHolder, Vir
                     }
                 }
             }
-        }
+        }*/
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound tag) {
+    protected void writeNbt(NbtCompound tag) {
         super.writeNbt(tag);
-        tag.putDouble("Energy", energy);
-        return tag;
+        tag.putLong("Energy", this.energyStorage.amount);
     }
 
     @Override
     public void readNbt(NbtCompound tag) {
         super.readNbt(tag);
-        this.energy = tag.getDouble("Energy");
+        this.energyStorage.amount = tag.getLong("Energy");
     }
 
     @Override
-    public double getEnergyAmount() {
-        return this.energy;
-    }
-
-    @Override
-    public void setEnergyAmount(double amount) {
-        this.energy = amount;
+    public void markDirty() {
+        super.markDirty();
 
         int lvl = this.getCachedState().get(BatteryBlock.LEVEL);
-        double proc = this.energy / this.getMaxEnergyCapacity();
+        double proc = (double) this.energyStorage.amount / ElectricMachine.of(this.getCachedState()).getCapacity();
         int newLvl;
 
         if (proc > 0.95) {
@@ -92,22 +88,7 @@ public class BatteryBlockEntity extends BlockEntity implements EnergyHolder, Vir
     }
 
     @Override
-    public boolean isEnergySource() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnergyConsumer() {
-        return true;
-    }
-
-    @Override
-    public double getMaxEnergyCapacity() {
-        return ((MachineBlock) this.getCachedState().getBlock()).getCapacity();
-    }
-
-    @Override
-    public double getMaxEnergyTransferCapacity(Direction dir, boolean isDraining) {
-        return isDraining ? ((MachineBlock) this.getCachedState().getBlock()).getMaxEnergyOutput() : ((MachineBlock) this.getCachedState().getBlock()).getMaxEnergyInput();
+    public EnergyStorage getEnergy() {
+        return this.energyStorage;
     }
 }

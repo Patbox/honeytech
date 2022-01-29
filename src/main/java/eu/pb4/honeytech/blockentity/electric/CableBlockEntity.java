@@ -1,30 +1,21 @@
 package eu.pb4.honeytech.blockentity.electric;
 
-import eu.pb4.honeytech.blockentity.EnergyHolder;
 import eu.pb4.honeytech.blockentity.HTBlockEntities;
-import eu.pb4.polymer.interfaces.VirtualObject;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3f;
-import net.minecraft.world.World;
 
-import java.util.ArrayList;
+public class CableBlockEntity extends BlockEntity {
+    //public final SimpleEnergyStorage energyStorage;
 
-public class CableBlockEntity extends BlockEntity implements EnergyHolder, VirtualObject {
-    private double energy = 0;
-    private int ticker = 0;
-    public static final double MAX_ENERGY_CAPACITY = 512;
+    private final int ticker = 0;
+    public static final long TRANSFER_RATE = 512;
 
     public CableBlockEntity(BlockPos pos, BlockState state) {
         super(HTBlockEntities.CABLE, pos, state);
     }
 
-    public static <T extends BlockEntity> void tick(World world, BlockPos pos, BlockState state, T t) {
+    /*public static <T extends BlockEntity> void tick(World world, BlockPos pos, BlockState state, T t) {
         if (!(t instanceof CableBlockEntity self)) {
             return;
         }
@@ -73,10 +64,9 @@ public class CableBlockEntity extends BlockEntity implements EnergyHolder, Virtu
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound tag) {
+    public void writeNbt(NbtCompound tag) {
         super.writeNbt(tag);
         tag.putDouble("Energy", energy);
-        return tag;
     }
 
     @Override
@@ -107,11 +97,11 @@ public class CableBlockEntity extends BlockEntity implements EnergyHolder, Virtu
 
     @Override
     public double getMaxEnergyCapacity() {
-        return MAX_ENERGY_CAPACITY;
+        return TRANSFER_RATE;
     }
 
     @Override
     public double getMaxEnergyTransferCapacity(Direction dir, boolean isDraining) {
         return 256;
-    }
+    }*/
 }

@@ -1,10 +1,10 @@
 package eu.pb4.honeytech.block.electric;
 
-import eu.pb4.honeytech.block.MachineBlock;
+import eu.pb4.honeytech.block.ElectricMachine;
 import eu.pb4.honeytech.blockentity.electric.BatteryBlockEntity;
 import eu.pb4.honeytech.other.HTTier;
 import eu.pb4.honeytech.other.HTUtils;
-import eu.pb4.polymer.block.VirtualHeadBlock;
+import eu.pb4.polymer.api.block.PolymerHeadBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
@@ -18,7 +18,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class BatteryBlock extends Block implements VirtualHeadBlock, BlockEntityProvider, MachineBlock {
+public class BatteryBlock extends Block implements PolymerHeadBlock, BlockEntityProvider, ElectricMachine {
     public static IntProperty LEVEL = IntProperty.of("level", 0, 4);
     public final HTTier tier;
 
@@ -33,17 +33,17 @@ public class BatteryBlock extends Block implements VirtualHeadBlock, BlockEntity
     }
 
     @Override
-    public Block getVirtualBlock() {
-    return Blocks.PLAYER_HEAD;
+    public Block getPolymerBlock(BlockState state) {
+        return Blocks.PLAYER_HEAD;
     }
 
     @Override
-    public BlockState getVirtualBlockState(BlockState state) {
+    public BlockState getPolymerBlockState(BlockState state) {
         return Blocks.PLAYER_HEAD.getDefaultState();
     }
 
     @Override
-    public String getVirtualHeadSkin(BlockState state) {
+    public String getPolymerSkinValue(BlockState state) {
         if (this.tier == HTTier.COPPER) {
             switch (state.get(LEVEL)) {
                 case 0:
@@ -89,27 +89,27 @@ public class BatteryBlock extends Block implements VirtualHeadBlock, BlockEntity
     }
 
     @Override
-    public double getPerTickEnergyUsage() {
+    public long getPerTickEnergyUsage() {
         return 0;
     }
 
     @Override
-    public double getPerTickEnergyProduction() {
+    public long getPerTickEnergyProduction() {
         return 0;
     }
 
     @Override
-    public double getMaxEnergyOutput() {
-        return this.tier.speed * 512;
+    public long getMaxEnergyOutput() {
+        return (long) (this.tier.speed * 512);
     }
 
     @Override
-    public double getMaxEnergyInput() {
-        return this.tier.speed * 256;
+    public long getMaxEnergyInput() {
+        return (long) (this.tier.speed * 256);
     }
 
     @Override
-    public double getCapacity() {
+    public long getCapacity() {
         return this.tier.energyCapacity * 10;
     }
 

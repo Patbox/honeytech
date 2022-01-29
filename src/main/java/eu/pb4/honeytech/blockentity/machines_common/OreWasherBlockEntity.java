@@ -4,7 +4,6 @@ import eu.pb4.honeytech.blockentity.EnergyHolder;
 import eu.pb4.honeytech.blockentity.HTBlockEntities;
 import eu.pb4.honeytech.blockentity.HandlePoweredBlockEntity;
 import eu.pb4.honeytech.blockentity.electric.ElectricOreWasherBlockEntity;
-import eu.pb4.honeytech.item.HTItems;
 import eu.pb4.honeytech.other.HTLootTables;
 import eu.pb4.honeytech.other.HTUtils;
 import eu.pb4.honeytech.other.ImplementedInventory;
@@ -29,7 +28,6 @@ import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.InventoryS2CPacket;
-import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.particle.ItemStackParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.screen.ScreenHandler;
@@ -53,7 +51,6 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -99,11 +96,9 @@ public class OreWasherBlockEntity extends LockableContainerBlockEntity implement
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound tag) {
+    public void writeNbt(NbtCompound tag) {
         super.writeNbt(tag);
         Inventories.writeNbt(tag, this.items);
-
-        return tag;
     }
 
     @Override
@@ -249,13 +244,37 @@ public class OreWasherBlockEntity extends LockableContainerBlockEntity implement
 
     public static class OreWasherGui extends SimpleGui {
         private final OreWasherBlockEntity blockEntity;
-        private final double energyLast = -1;
+        private final long energyLast = -1;
         private static final Style BATTERY_STYLE = Style.EMPTY.withItalic(false).withColor(Formatting.GRAY);
 
         public OreWasherGui(OreWasherBlockEntity blockEntity, ServerPlayerEntity player) {
             super(blockEntity.items.size() == 18 ? ScreenHandlerType.GENERIC_9X2 : ScreenHandlerType.GENERIC_9X4, player, false);
             this.setTitle(new TranslatableText(blockEntity.getCachedState().getBlock().getTranslationKey()));
             this.blockEntity = blockEntity;
+
+            if (this.blockEntity instanceof ElectricOreWasherBlockEntity) {
+                GuiElementBuilder builder = new GuiElementBuilder(Items.GRAY_STAINED_GLASS_PANE).setName(new LiteralText(""));
+
+                for (int x = 0; x < 9; x++) {
+                    this.setSlot(x + 9, builder);
+                }
+
+                if (this.blockEntity instanceof EnergyHolder energyHolder) {
+                    this.setSlot(13, HTUtils.createBatteryIcon(energyHolder.getEnergy()));
+                }
+
+                for (int x = 0; x < 9; x++) {
+                    this.setSlotRedirect(x, new Slot(blockEntity, x + 18, 0, 0));
+                }
+
+                for (int x = 0; x < 18; x++) {
+                    this.setSlotRedirect(x + 18, new OutputSlot(blockEntity, x, 0, 0));
+                }
+            } else {
+                for (int x = 0; x < 18; x++) {
+                    this.setSlotRedirect(x, new OutputSlot(blockEntity, x, 0, 0));
+                }
+            }
         }
 
         @Override
@@ -263,8 +282,7 @@ public class OreWasherBlockEntity extends LockableContainerBlockEntity implement
             Slot slot = this.getSlotRedirect(index);
 
             if (slot instanceof OutputSlot) {
-                this.player.networkHandler.sendPacket(new InventoryS2CPacket(this.syncId, this.screenHandler.getStacks()));
-                this.player.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(-1, -1, this.screenHandler.getCursorStack()));
+                this.player.networkHandler.sendPacket(new InventoryS2CPacket(this.syncId, this.screenHandler.nextRevision(), this.screenHandler.getStacks(), this.screenHandler.getCursorStack()));
             }
 
             return super.onAnyClick(index, type, action);
@@ -272,47 +290,11 @@ public class OreWasherBlockEntity extends LockableContainerBlockEntity implement
 
         @Override
         public void onTick() {
-            if (this.blockEntity instanceof EnergyHolder && !MathHelper.approximatelyEquals(((EnergyHolder) this.blockEntity).getEnergyAmount(), this.energyLast)) {
-                this.getSlot(13).getItemStack().setCustomName(HTUtils.getText("gui", "battery_charge",
-                        new LiteralText(HTUtils.formatEnergy(((EnergyHolder) this.blockEntity).getEnergyAmount())).formatted(Formatting.WHITE),
-                        new LiteralText(HTUtils.formatEnergy(((EnergyHolder) this.blockEntity).getMaxEnergyCapacity())).formatted(Formatting.WHITE),
-                        new LiteralText(HTUtils.dtt(((EnergyHolder) this.blockEntity).getEnergyAmount() / ((EnergyHolder) this.blockEntity).getMaxEnergyCapacity() * 100) + "%").formatted(Formatting.WHITE)
-                ).setStyle(BATTERY_STYLE));
-            }
+            if (this.blockEntity instanceof EnergyHolder energyHolder && energyHolder.getEnergy().getAmount() != this.energyLast) {
+                this.setSlot(13, HTUtils.createBatteryIcon(energyHolder.getEnergy()));
 
+            }
             super.onTick();
-        }
-
-        @Override
-        public void onUpdate(boolean firstUpdate) {
-            if (firstUpdate) {
-                if (this.blockEntity instanceof ElectricOreWasherBlockEntity) {
-                    GuiElementBuilder builder = new GuiElementBuilder(Items.GRAY_STAINED_GLASS_PANE).setName(new LiteralText(""));
-
-                    for (int x = 0; x < 9; x++) {
-                        this.setSlot(x + 9, builder);
-                    }
-
-                    this.setSlot(13, new GuiElementBuilder(HTItems.BATTERY).setName(HTUtils.getText("gui", "battery_charge",
-                            new LiteralText(HTUtils.formatEnergy(((EnergyHolder) this.blockEntity).getEnergyAmount())).formatted(Formatting.WHITE),
-                            new LiteralText(HTUtils.formatEnergy(((EnergyHolder) this.blockEntity).getMaxEnergyCapacity())).formatted(Formatting.WHITE),
-                            new LiteralText(HTUtils.dtt(((EnergyHolder) this.blockEntity).getEnergyAmount() / ((EnergyHolder) this.blockEntity).getMaxEnergyCapacity() * 100) + "%").formatted(Formatting.WHITE)
-                    ).setStyle(BATTERY_STYLE)));
-
-                    for (int x = 0; x < 9; x++) {
-                        this.setSlotRedirect(x, new Slot(blockEntity, x + 18, 0, 0));
-                    }
-
-                    for (int x = 0; x < 18; x++) {
-                        this.setSlotRedirect(x + 18, new OutputSlot(blockEntity, x, 0, 0));
-                    }
-                } else {
-                    for (int x = 0; x < 18; x++) {
-                        this.setSlotRedirect(x, new OutputSlot(blockEntity, x, 0, 0));
-                    }
-                }
-            }
-            super.onUpdate(firstUpdate);
         }
 
         @Override

@@ -3,7 +3,7 @@ package eu.pb4.honeytech.block.basic_machines;
 import eu.pb4.honeytech.block.HTBlocks;
 import eu.pb4.honeytech.block.machines_common.HandleBlock;
 import eu.pb4.honeytech.block.machines_common.OreWasherBlock;
-import eu.pb4.polymer.block.VirtualBlock;
+import eu.pb4.polymer.api.block.PolymerBlock;
 import net.minecraft.block.*;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemPlacementContext;
@@ -12,23 +12,18 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
-public class BasicOreWasherBlock extends OreWasherBlock implements VirtualBlock {
+public class BasicOreWasherBlock extends OreWasherBlock implements PolymerBlock {
     public BasicOreWasherBlock(Settings settings) {
         super(settings);
     }
 
     @Override
-    public Block getVirtualBlock() {
+    public Block getPolymerBlock(BlockState state) {
         return Blocks.CAULDRON;
     }
 
     @Override
-    public BlockState getDefaultVirtualBlockState() {
-        return Blocks.CAULDRON.getDefaultState();
-    }
-
-    @Override
-    public BlockState getVirtualBlockState(BlockState state) {
+    public BlockState getPolymerBlockState(BlockState state) {
         int water = state.get(WATER);
         return water == 0
                 ? Blocks.CAULDRON.getDefaultState()

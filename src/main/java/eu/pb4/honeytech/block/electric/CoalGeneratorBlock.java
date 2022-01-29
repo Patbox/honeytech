@@ -1,11 +1,11 @@
 package eu.pb4.honeytech.block.electric;
 
 import com.google.common.collect.ImmutableList;
-import eu.pb4.honeytech.block.MachineBlock;
+import eu.pb4.honeytech.block.ElectricMachine;
 import eu.pb4.honeytech.block.WrenchableBlock;
 import eu.pb4.honeytech.blockentity.electric.CoalGeneratorBlockEntity;
 import eu.pb4.honeytech.other.HTTier;
-import eu.pb4.polymer.block.VirtualHeadBlock;
+import eu.pb4.polymer.api.block.PolymerHeadBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
@@ -28,14 +28,20 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
-public class CoalGeneratorBlock extends Block implements VirtualHeadBlock, BlockEntityProvider, WrenchableBlock, MachineBlock {
+public class CoalGeneratorBlock extends Block implements PolymerHeadBlock, BlockEntityProvider, WrenchableBlock, ElectricMachine {
     public final HTTier tier;
+
     public CoalGeneratorBlock(Settings settings, HTTier tier) {
         super(settings);
         this.setDefaultState(this.stateManager.getDefaultState().with(Properties.LIT, false));
         this.tier = tier;
+    }
+
+    public static int getLightLevel(BlockState state) {
+        return state.get(Properties.LIT) ? 10 : 0;
     }
 
     @Override
@@ -49,8 +55,8 @@ public class CoalGeneratorBlock extends Block implements VirtualHeadBlock, Block
     }
 
     @Override
-    public Block getVirtualBlock() {
-    return Blocks.PLAYER_HEAD;
+    public Block getPolymerBlock(BlockState state) {
+        return Blocks.PLAYER_HEAD;
     }
 
     @Override
@@ -70,9 +76,9 @@ public class CoalGeneratorBlock extends Block implements VirtualHeadBlock, Block
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof CoalGeneratorBlockEntity) {
                 ItemScatterer.spawn(world, pos, (Inventory) blockEntity);
-                world.updateComparators(pos,this);
+                world.updateComparators(pos, this);
 
-                for (CoalGeneratorBlockEntity.Gui gui : ((CoalGeneratorBlockEntity) blockEntity).openGuis) {
+                for (CoalGeneratorBlockEntity.Gui gui : new ArrayList<>(((CoalGeneratorBlockEntity) blockEntity).openGuis)) {
                     gui.close(false);
                 }
             }
@@ -81,17 +87,13 @@ public class CoalGeneratorBlock extends Block implements VirtualHeadBlock, Block
     }
 
     @Override
-    public BlockState getVirtualBlockState(BlockState state) {
+    public BlockState getPolymerBlockState(BlockState state) {
         return Blocks.PLAYER_HEAD.getDefaultState().with(Properties.ROTATION, state.get(Properties.HORIZONTAL_FACING).getOpposite().getHorizontal() * 4);
     }
 
     @Override
-    public String getVirtualHeadSkin(BlockState state) {
+    public String getPolymerSkinValue(BlockState state) {
         return "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDE0YTJlYTIxZDZjOTY5MzhhMjcxZmNmZjUyM2E2NTA3YjQ1NGY4NGJhZDk1OTkzZjQ0OTJhNmZiYzMwOTRmNSJ9fX0=";
-    }
-
-    public static int getLightLevel(BlockState state) {
-        return state.get(Properties.LIT) ? 10 : 0;
     }
 
     @Override
@@ -100,27 +102,27 @@ public class CoalGeneratorBlock extends Block implements VirtualHeadBlock, Block
     }
 
     @Override
-    public double getPerTickEnergyUsage() {
+    public long getPerTickEnergyUsage() {
         return 0;
     }
 
     @Override
-    public double getPerTickEnergyProduction() {
+    public long getPerTickEnergyProduction() {
         return this.tier.energyCapacity / 16;
     }
 
     @Override
-    public double getMaxEnergyOutput() {
+    public long getMaxEnergyOutput() {
         return this.getPerTickEnergyProduction();
     }
 
     @Override
-    public double getMaxEnergyInput() {
+    public long getMaxEnergyInput() {
         return 0;
     }
 
     @Override
-    public double getCapacity() {
+    public long getCapacity() {
         return this.tier.energyCapacity;
     }
 

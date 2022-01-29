@@ -3,7 +3,7 @@ package eu.pb4.honeytech.block.basic_machines;
 import eu.pb4.honeytech.block.HTBlocks;
 import eu.pb4.honeytech.block.machines_common.GrinderBlock;
 import eu.pb4.honeytech.block.machines_common.HandleBlock;
-import eu.pb4.polymer.block.VirtualBlock;
+import eu.pb4.polymer.api.block.PolymerBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -15,24 +15,19 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
-public class BasicGrinderBlock extends GrinderBlock implements VirtualBlock {
+public class BasicGrinderBlock extends GrinderBlock implements PolymerBlock {
     public BasicGrinderBlock(Settings settings) {
         super(settings, 1);
     }
 
     @Override
-    public Block getVirtualBlock() {
+    public Block getPolymerBlock(BlockState state) {
         return Blocks.DISPENSER;
     }
 
     @Override
-    public BlockState getDefaultVirtualBlockState() {
+    public BlockState getPolymerBlockState(BlockState state) {
         return Blocks.DISPENSER.getDefaultState().with(DispenserBlock.FACING, Direction.UP);
-    }
-
-    @Override
-    public BlockState getVirtualBlockState(BlockState state) {
-        return this.getDefaultVirtualBlockState();
     }
 
     @Override

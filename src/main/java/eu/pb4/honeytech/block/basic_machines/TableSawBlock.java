@@ -2,7 +2,7 @@ package eu.pb4.honeytech.block.basic_machines;
 
 import eu.pb4.honeytech.other.ImplementedInventory;
 import eu.pb4.honeytech.recipe_types.TableSawRecipe;
-import eu.pb4.polymer.block.VirtualBlock;
+import eu.pb4.polymer.api.block.PolymerBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -40,7 +40,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class TableSawBlock extends Block implements VirtualBlock {
+public class TableSawBlock extends Block implements PolymerBlock {
     public static final EnumProperty<Parts> PART = EnumProperty.of("part", Parts.class);
 
     public TableSawBlock(Settings settings) {
@@ -175,17 +175,13 @@ public class TableSawBlock extends Block implements VirtualBlock {
     }
 
     @Override
-    public Block getVirtualBlock() {
+    public Block getPolymerBlock(BlockState state) {
         return Blocks.STONECUTTER;
     }
 
-    @Override
-    public BlockState getDefaultVirtualBlockState() {
-        return Blocks.STONECUTTER.getDefaultState();
-    }
 
     @Override
-    public BlockState getVirtualBlockState(BlockState state) {
+    public BlockState getPolymerBlockState(BlockState state) {
         if (state.get(PART) == Parts.CENTER_EW) {
             return Blocks.STONECUTTER.getDefaultState().with(StonecutterBlock.FACING, Direction.NORTH);
         } else if (state.get(PART) == Parts.CENTER_NS) {

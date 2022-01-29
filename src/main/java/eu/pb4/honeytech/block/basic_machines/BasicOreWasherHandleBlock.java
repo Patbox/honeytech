@@ -24,7 +24,7 @@ public class BasicOreWasherHandleBlock extends HandleBlock implements Wrenchable
     }
 
     @Override
-    public BlockState getVirtualBlockState(BlockState state) {
+    public BlockState getPolymerBlockState(BlockState state) {
         return Blocks.OAK_TRAPDOOR.getDefaultState().with(HorizontalFacingBlock.FACING, state.get(HorizontalFacingBlock.FACING));
     }
 

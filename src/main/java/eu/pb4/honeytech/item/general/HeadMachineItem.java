@@ -1,26 +1,28 @@
 package eu.pb4.honeytech.item.general;
 
-import eu.pb4.honeytech.block.MachineBlock;
+import eu.pb4.honeytech.block.ElectricMachine;
 import eu.pb4.honeytech.other.HTUtils;
-import eu.pb4.polymer.block.VirtualHeadBlock;
-import eu.pb4.polymer.item.VirtualHeadBlockItem;
+import eu.pb4.polymer.api.block.PolymerHeadBlock;
+import eu.pb4.polymer.api.item.PolymerHeadBlockItem;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class HeadMachineItem extends VirtualHeadBlockItem {
-    public HeadMachineItem(VirtualHeadBlock block, Settings settings) {
+public class HeadMachineItem extends PolymerHeadBlockItem {
+    public HeadMachineItem(PolymerHeadBlock block, Settings settings) {
         super(block, settings);
     }
 
     @Override
-    public void modifyTooltip(List<Text> tooltip, ItemStack stack, ServerPlayerEntity player) {
-        if (this.getBlock() instanceof MachineBlock) {
-            MachineBlock machine = (MachineBlock) this.getBlock();
+    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
+        if (this.getBlock() instanceof ElectricMachine) {
+            ElectricMachine machine = (ElectricMachine) this.getBlock();
 
             if (machine.getCapacity() > 0) {
                 tooltip.add(HTUtils.styledTooltip("capacity",

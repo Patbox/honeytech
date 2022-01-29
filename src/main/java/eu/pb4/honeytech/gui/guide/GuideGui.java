@@ -322,13 +322,13 @@ public class GuideGui extends SimpleGui {
     }
 
     private static GuiElementInterface getRecipeIngredientElement(Ingredient ingredient) {
-        ItemStack[] stacks = ingredient.getMatchingStacksClient();
+        ItemStack[] stacks = ingredient.getMatchingStacks();
 
         return stacks.length > 0 ? new AnimatedGuiElement(stacks, 20, false, GuideGui::emptyCallback) : new GuiElement(ItemStack.EMPTY, GuideGui::emptyCallback);
     }
 
     private static ItemStack[] readIngredient(Ingredient ingredient) {
-        ItemStack[] stacks = ingredient.getMatchingStacksClient();
+        ItemStack[] stacks = ingredient.getMatchingStacks();
         if (stacks.length > 0) {
             return stacks;
         } else {

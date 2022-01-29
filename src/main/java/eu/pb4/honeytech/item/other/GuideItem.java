@@ -2,7 +2,7 @@ package eu.pb4.honeytech.item.other;
 
 import eu.pb4.honeytech.advancements.HTCriteria;
 import eu.pb4.honeytech.gui.guide.GuideGui;
-import eu.pb4.polymer.item.VirtualItem;
+import eu.pb4.polymer.api.item.PolymerItem;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -15,7 +15,7 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
 
-public class GuideItem extends Item implements VirtualItem {
+public class GuideItem extends Item implements PolymerItem {
     public GuideItem(Settings settings) {
         super(settings);
     }
@@ -30,15 +30,15 @@ public class GuideItem extends Item implements VirtualItem {
     }
 
     @Override
-    public Item getVirtualItem() {
+    public Item getPolymerItem(ItemStack itemStack, ServerPlayerEntity player) {
         return Items.KNOWLEDGE_BOOK;
     }
 
     @Override
-    public ItemStack getVirtualItemStack(ItemStack itemStack, ServerPlayerEntity player) {
-        ItemStack out = VirtualItem.super.getVirtualItemStack(itemStack, player);
+    public ItemStack getPolymerItemStack(ItemStack itemStack, ServerPlayerEntity player) {
+        ItemStack out = PolymerItem.super.getPolymerItemStack(itemStack, player);
         out.addEnchantment(Enchantments.INFINITY, 0);
-        out.getOrCreateTag().put("Recipes", new NbtList());
+        out.getOrCreateNbt().put("Recipes", new NbtList());
         return out;
     }
 

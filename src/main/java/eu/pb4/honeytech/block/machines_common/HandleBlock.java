@@ -1,7 +1,7 @@
 package eu.pb4.honeytech.block.machines_common;
 
 import eu.pb4.honeytech.blockentity.HandlePoweredBlockEntity;
-import eu.pb4.polymer.block.BasicVirtualBlock;
+import eu.pb4.polymer.api.block.SimplePolymerBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
@@ -14,7 +14,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class HandleBlock extends BasicVirtualBlock {
+public class HandleBlock extends SimplePolymerBlock {
     public HandleBlock(Settings settings, Block virtualBlock) {
         super(settings.dropsNothing(), virtualBlock);
     }

@@ -1,7 +1,7 @@
 package eu.pb4.honeytech.block.basic_machines;
 
 import eu.pb4.honeytech.blockentity.basic_machines.EnchancedFurnaceBlockEntity;
-import eu.pb4.polymer.block.VirtualBlock;
+import eu.pb4.polymer.api.block.PolymerBlock;
 import net.minecraft.block.AbstractFurnaceBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -14,7 +14,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class EnchancedFurnaceBlock extends AbstractFurnaceBlock implements VirtualBlock {
+public class EnchancedFurnaceBlock extends AbstractFurnaceBlock implements PolymerBlock {
     public final float speedMulti;
     public final float burnMulti;
 
@@ -34,12 +34,12 @@ public class EnchancedFurnaceBlock extends AbstractFurnaceBlock implements Virtu
     }
 
     @Override
-    public Block getVirtualBlock() {
+    public Block getPolymerBlock(BlockState state) {
         return Blocks.FURNACE;
     }
 
     @Override
-    public BlockState getVirtualBlockState(BlockState state) {
+    public BlockState getPolymerBlockState(BlockState state) {
         return Blocks.FURNACE.getDefaultState()
                 .with(AbstractFurnaceBlock.FACING, state.get(AbstractFurnaceBlock.FACING))
                 .with(AbstractFurnaceBlock.LIT, state.get(AbstractFurnaceBlock.LIT));

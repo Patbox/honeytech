@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import eu.pb4.honeytech.block.WrenchableBlock;
 import eu.pb4.honeytech.blockentity.storage.ItemExtractorBlockEntity;
 import eu.pb4.honeytech.blockentity.storage.PipeBlockEntity;
-import eu.pb4.polymer.block.VirtualBlock;
+import eu.pb4.polymer.api.block.PolymerBlock;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-public class ItemExtractorBlock extends Block implements BlockEntityProvider, VirtualBlock, WrenchableBlock {
+public class ItemExtractorBlock extends Block implements BlockEntityProvider, PolymerBlock, WrenchableBlock {
     public static DirectionProperty INPUT_DIR = DirectionProperty.of("input", Direction.values());
     public static DirectionProperty OUTPUT_DIR = DirectionProperty.of("output", Direction.values());
 
@@ -40,13 +40,8 @@ public class ItemExtractorBlock extends Block implements BlockEntityProvider, Vi
     }
 
     @Override
-    public Block getVirtualBlock() {
+    public Block getPolymerBlock(BlockState state) {
         return Blocks.GRINDSTONE;
-    }
-
-    @Override
-    public BlockState getDefaultVirtualBlockState() {
-        return Blocks.GRINDSTONE.getDefaultState();
     }
 
     @Override
@@ -88,15 +83,16 @@ public class ItemExtractorBlock extends Block implements BlockEntityProvider, Vi
     }
 
     @Override
-    public BlockState getVirtualBlockState(BlockState state) {
+    public BlockState getPolymerBlockState(BlockState state) {
+
         Direction input = state.get(INPUT_DIR);
 
         if (input.getAxis() == Direction.Axis.Y) {
-            return getDefaultVirtualBlockState().with(GrindstoneBlock.FACE, input.getDirection() == Direction.AxisDirection.POSITIVE ? WallMountLocation.CEILING : WallMountLocation.FLOOR);
+            return Blocks.GRINDSTONE.getDefaultState().with(GrindstoneBlock.FACE, input.getDirection() == Direction.AxisDirection.POSITIVE ? WallMountLocation.CEILING : WallMountLocation.FLOOR);
         }
-            return getDefaultVirtualBlockState()
-                    .with(GrindstoneBlock.FACE, WallMountLocation.WALL)
-                    .with(GrindstoneBlock.FACING, input.getOpposite());
+        return Blocks.GRINDSTONE.getDefaultState()
+                .with(GrindstoneBlock.FACE, WallMountLocation.WALL)
+                .with(GrindstoneBlock.FACING, input.getOpposite());
 
     }
 

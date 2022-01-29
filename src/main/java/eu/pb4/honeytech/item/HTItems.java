@@ -12,72 +12,77 @@ import eu.pb4.honeytech.item.tools.AmmeterItem;
 import eu.pb4.honeytech.item.tools.WrenchItem;
 import eu.pb4.honeytech.other.HTDataPack;
 import eu.pb4.honeytech.other.HTUtils;
-import eu.pb4.polymer.item.BasicVirtualItem;
+import eu.pb4.polymer.api.item.PolymerItemGroup;
+import eu.pb4.polymer.api.item.SimplePolymerItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.registry.Registry;
 import org.apache.commons.lang3.tuple.Pair;
 
 
 public class HTItems {
-    public static Item GUIDE_BOOK = new GuideItem(new Item.Settings().maxCount(1));
+    public static final PolymerItemGroup ITEM_GROUP = PolymerItemGroup.create(HTUtils.id("general"), new TranslatableText("mod.honeytech.name"), () -> new ItemStack(HTItems.ELECTRIC_GRINDER_MK1));
+    
+    public static final Item GUIDE_BOOK = new GuideItem(new Item.Settings().group(ITEM_GROUP).maxCount(1));
 
-    public static Item WRENCH = new WrenchItem(new Item.Settings().maxCount(1));
+    public static final Item WRENCH = new WrenchItem(new Item.Settings().group(ITEM_GROUP).maxCount(1));
 
-    public static Item BASIC_GRINDER = new GlowingBlockItem(HTBlocks.BASIC_GRINDER, Items.DISPENSER, new Item.Settings());
-    public static Item TABLE_SAW = new GlowingBlockItem(HTBlocks.TABLE_SAW, Items.STONECUTTER, new Item.Settings());
-    public static Item BASIC_ORE_WASHER = new GlowingBlockItem(HTBlocks.BASIC_ORE_WASHER, Items.CAULDRON, new Item.Settings());
+    public static final Item BASIC_GRINDER = new GlowingBlockItem(HTBlocks.BASIC_GRINDER, Items.DISPENSER, new Item.Settings().group(ITEM_GROUP));
+    public static final Item TABLE_SAW = new GlowingBlockItem(HTBlocks.TABLE_SAW, Items.STONECUTTER, new Item.Settings().group(ITEM_GROUP));
+    public static final Item BASIC_ORE_WASHER = new GlowingBlockItem(HTBlocks.BASIC_ORE_WASHER, Items.CAULDRON, new Item.Settings().group(ITEM_GROUP));
 
-    public static Item PORTABLE_CRAFTING = new PortableCraftingItem(new Item.Settings().maxCount(1));
+    public static final Item PORTABLE_CRAFTING = new PortableCraftingItem(new Item.Settings().group(ITEM_GROUP).maxCount(1));
 
-    public static Item COAL_DUST = new BasicVirtualItem(new Item.Settings(), Items.GUNPOWDER);
-    public static Item RAW_ALUMINIUM = new BasicVirtualItem(new Item.Settings(), Items.RAW_IRON);
+    public static final Item COAL_DUST = new SimplePolymerItem(new Item.Settings().group(ITEM_GROUP), Items.GUNPOWDER);
+    public static final Item RAW_ALUMINIUM = new SimplePolymerItem(new Item.Settings().group(ITEM_GROUP), Items.RAW_IRON);
 
-    public static Item ALUMINIUM_INGOT = new BasicVirtualItem(new Item.Settings(), Items.IRON_INGOT);
+    public static final Item ALUMINIUM_INGOT = new SimplePolymerItem(new Item.Settings().group(ITEM_GROUP), Items.IRON_INGOT);
 
-    public static Item PIPE = new GlowingBlockItem(HTBlocks.PIPE, Items.DIORITE_WALL, new Item.Settings());
-    public static Item ITEM_EXTRACTOR = new GlowingBlockItem(HTBlocks.ITEM_EXTRACTOR, Items.GRINDSTONE, new Item.Settings());
+    public static final Item PIPE = new GlowingBlockItem(HTBlocks.PIPE, Items.DIORITE_WALL, new Item.Settings().group(ITEM_GROUP));
+    public static final Item ITEM_EXTRACTOR = new GlowingBlockItem(HTBlocks.ITEM_EXTRACTOR, Items.GRINDSTONE, new Item.Settings().group(ITEM_GROUP));
 
-    public static Item ENCHANCED_FURNACE = new GlowingBlockItem(HTBlocks.ENCHANCED_FURNACE, Items.FURNACE, new Item.Settings());
+    public static final Item ENCHANCED_FURNACE = new GlowingBlockItem(HTBlocks.ENCHANCED_FURNACE, Items.FURNACE, new Item.Settings().group(ITEM_GROUP));
 
-    public static Item TRASHCAN = new HeadMachineItem(HTBlocks.TRASHCAN, new Item.Settings());
-    public static Item PORTABLE_TRASHCAN = new PortableTrashCanItem(new Item.Settings());
+    public static final Item TRASHCAN = new HeadMachineItem(HTBlocks.TRASHCAN, new Item.Settings().group(ITEM_GROUP));
+    public static final Item PORTABLE_TRASHCAN = new PortableTrashCanItem(new Item.Settings().group(ITEM_GROUP));
 
-    public static Item COPPER_WIRE = new GlowingItem(new Item.Settings(), Items.STRING);
-    public static Item MAGNET = new HeadItem(new Item.Settings(), "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWJhOGViYzRjNmE4MTczMDk0NzQ5OWJmN2UxZDVlNzNmZWQ2YzFiYjJjMDUxZTk2ZDM1ZWIxNmQyNDYxMGU3In19fQ==");
-    public static Item MOTOR = new HeadItem(new Item.Settings(), "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGNiY2EwMTJmNjdlNTRkZTlhZWU3MmZmNDI0ZTA1NmMyYWU1OGRlNWVhY2M5NDlhYjJiY2Q5NjgzY2VjIn19fQ==");
-    public static Item CIRCUIT_BOARD = new GlowingItem(new Item.Settings(), Items.ACTIVATOR_RAIL);
-    public static Item FAN = new HeadItem(new Item.Settings(), "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzUxOTQ0YjQ4OGUxMWNkYTY1MTc3ZDU5MTFkNjUxMjgyYjMwMTI2NjVlNjNiODkyOWUxYjZhNDc0NGI3Y2E4In19fQ==");
-    public static Item BATTERY = new HeadItem(new Item.Settings(), "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjRmMjFjZjVjMjM0ZmM5NmRiOTBhMGEzMTFkNmZiZTEyZjg3ODliN2ZhODE1NTcxNjc1N2ZkNTE2YjE4MTEifX19");
-    public static Item ENERGY_REGULATOR = new HeadItem(new Item.Settings(), "ewogICJ0aW1lc3RhbXAiIDogMTYyMDA2NDE1MDczNCwKICAicHJvZmlsZUlkIiA6ICI4OGU0YWNiYTQwOTc0YWZkYmE0ZDM1YjdlYzdmNmJmYSIsCiAgInByb2ZpbGVOYW1lIiA6ICJKb2FvMDkxNSIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS84YzhlMTYwM2E0MGY0Y2Y3Y2VhMzY4NGQ0ODg2YzdjMWZmOWY2NDM5YjhlM2FiOWFiYjgyNzZlNTM5OTdjYTE4IiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0=");
+    public static final Item COPPER_WIRE = new GlowingItem(new Item.Settings().group(ITEM_GROUP), Items.STRING);
+    public static final Item MAGNET = new HeadItem(new Item.Settings().group(ITEM_GROUP), "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWJhOGViYzRjNmE4MTczMDk0NzQ5OWJmN2UxZDVlNzNmZWQ2YzFiYjJjMDUxZTk2ZDM1ZWIxNmQyNDYxMGU3In19fQ==");
+    public static final Item MOTOR = new HeadItem(new Item.Settings().group(ITEM_GROUP), "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGNiY2EwMTJmNjdlNTRkZTlhZWU3MmZmNDI0ZTA1NmMyYWU1OGRlNWVhY2M5NDlhYjJiY2Q5NjgzY2VjIn19fQ==");
+    public static final Item CIRCUIT_BOARD = new GlowingItem(new Item.Settings().group(ITEM_GROUP), Items.ACTIVATOR_RAIL);
+    public static final Item FAN = new HeadItem(new Item.Settings().group(ITEM_GROUP), "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzUxOTQ0YjQ4OGUxMWNkYTY1MTc3ZDU5MTFkNjUxMjgyYjMwMTI2NjVlNjNiODkyOWUxYjZhNDc0NGI3Y2E4In19fQ==");
+    public static final Item BATTERY = new HeadItem(new Item.Settings().group(ITEM_GROUP), "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjRmMjFjZjVjMjM0ZmM5NmRiOTBhMGEzMTFkNmZiZTEyZjg3ODliN2ZhODE1NTcxNjc1N2ZkNTE2YjE4MTEifX19");
+    public static final Item ENERGY_REGULATOR = new HeadItem(new Item.Settings().group(ITEM_GROUP), "ewogICJ0aW1lc3RhbXAiIDogMTYyMDA2NDE1MDczNCwKICAicHJvZmlsZUlkIiA6ICI4OGU0YWNiYTQwOTc0YWZkYmE0ZDM1YjdlYzdmNmJmYSIsCiAgInByb2ZpbGVOYW1lIiA6ICJKb2FvMDkxNSIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS84YzhlMTYwM2E0MGY0Y2Y3Y2VhMzY4NGQ0ODg2YzdjMWZmOWY2NDM5YjhlM2FiOWFiYjgyNzZlNTM5OTdjYTE4IiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0=");
 
-    public static Item CABLE = new GlowingBlockItem(HTBlocks.CABLE, Items.NETHER_BRICK_FENCE, new Item.Settings());
-    public static Item COAL_GENERATOR_MK1 = new HeadMachineItem(HTBlocks.COAL_GENERATOR_MK1, new Item.Settings());
-    public static Item COAL_GENERATOR_MK2 = new HeadMachineItem(HTBlocks.COAL_GENERATOR_MK2, new Item.Settings());
-    public static Item COAL_GENERATOR_MK3 = new HeadMachineItem(HTBlocks.COAL_GENERATOR_MK3, new Item.Settings());
+    public static final Item CABLE = new GlowingBlockItem(HTBlocks.CABLE, Items.NETHER_BRICK_FENCE, new Item.Settings().group(ITEM_GROUP));
+    public static final Item COAL_GENERATOR_MK1 = new HeadMachineItem(HTBlocks.COAL_GENERATOR_MK1, new Item.Settings().group(ITEM_GROUP));
+    public static final Item COAL_GENERATOR_MK2 = new HeadMachineItem(HTBlocks.COAL_GENERATOR_MK2, new Item.Settings().group(ITEM_GROUP));
+    public static final Item COAL_GENERATOR_MK3 = new HeadMachineItem(HTBlocks.COAL_GENERATOR_MK3, new Item.Settings().group(ITEM_GROUP));
 
-    public static Item SMALL_BATTERY = new HeadMachineItem(HTBlocks.SMALL_BATTERY, new Item.Settings());
-    public static Item MEDIUM_BATTERY = new HeadMachineItem(HTBlocks.MEDIUM_BATTERY, new Item.Settings());
-    public static Item BIG_BATTERY = new HeadMachineItem(HTBlocks.BIG_BATTERY, new Item.Settings());
+    public static final Item SMALL_BATTERY = new HeadMachineItem(HTBlocks.SMALL_BATTERY, new Item.Settings().group(ITEM_GROUP));
+    public static final Item MEDIUM_BATTERY = new HeadMachineItem(HTBlocks.MEDIUM_BATTERY, new Item.Settings().group(ITEM_GROUP));
+    public static final Item BIG_BATTERY = new HeadMachineItem(HTBlocks.BIG_BATTERY, new Item.Settings().group(ITEM_GROUP));
 
-    public static Item AMMETER = new AmmeterItem(new Item.Settings());
+    public static final Item AMMETER = new AmmeterItem(new Item.Settings().group(ITEM_GROUP));
 
-    public static Item ELECTRIC_GRINDER_MK1 = new HeadMachineItem(HTBlocks.ELECTRIC_GRINDER_MK1, new Item.Settings());
-    public static Item ELECTRIC_GRINDER_MK2 = new HeadMachineItem(HTBlocks.ELECTRIC_GRINDER_MK2, new Item.Settings());
-    public static Item ELECTRIC_GRINDER_MK3 = new HeadMachineItem(HTBlocks.ELECTRIC_GRINDER_MK3, new Item.Settings());
+    public static final Item ELECTRIC_GRINDER_MK1 = new HeadMachineItem(HTBlocks.ELECTRIC_GRINDER_MK1, new Item.Settings().group(ITEM_GROUP));
+    public static final Item ELECTRIC_GRINDER_MK2 = new HeadMachineItem(HTBlocks.ELECTRIC_GRINDER_MK2, new Item.Settings().group(ITEM_GROUP));
+    public static final Item ELECTRIC_GRINDER_MK3 = new HeadMachineItem(HTBlocks.ELECTRIC_GRINDER_MK3, new Item.Settings().group(ITEM_GROUP));
 
-    public static Item ELECTRIC_FURNACE_MK1 = new HeadMachineItem(HTBlocks.ELECTRIC_FURNACE_MK1, new Item.Settings());
-    public static Item ELECTRIC_FURNACE_MK2 = new HeadMachineItem(HTBlocks.ELECTRIC_FURNACE_MK2, new Item.Settings());
-    public static Item ELECTRIC_FURNACE_MK3 = new HeadMachineItem(HTBlocks.ELECTRIC_FURNACE_MK3, new Item.Settings());
+    public static final Item ELECTRIC_FURNACE_MK1 = new HeadMachineItem(HTBlocks.ELECTRIC_FURNACE_MK1, new Item.Settings().group(ITEM_GROUP));
+    public static final Item ELECTRIC_FURNACE_MK2 = new HeadMachineItem(HTBlocks.ELECTRIC_FURNACE_MK2, new Item.Settings().group(ITEM_GROUP));
+    public static final Item ELECTRIC_FURNACE_MK3 = new HeadMachineItem(HTBlocks.ELECTRIC_FURNACE_MK3, new Item.Settings().group(ITEM_GROUP));
 
-    public static Item ELECTRIC_ORE_WASHER_MK1 = new HeadMachineItem(HTBlocks.ELECTRIC_ORE_WASHER_MK1, new Item.Settings());
-    public static Item ELECTRIC_ORE_WASHER_MK2 = new HeadMachineItem(HTBlocks.ELECTRIC_ORE_WASHER_MK2, new Item.Settings());
-    public static Item ELECTRIC_ORE_WASHER_MK3 = new HeadMachineItem(HTBlocks.ELECTRIC_ORE_WASHER_MK3, new Item.Settings());
+    public static final Item ELECTRIC_ORE_WASHER_MK1 = new HeadMachineItem(HTBlocks.ELECTRIC_ORE_WASHER_MK1, new Item.Settings().group(ITEM_GROUP));
+    public static final Item ELECTRIC_ORE_WASHER_MK2 = new HeadMachineItem(HTBlocks.ELECTRIC_ORE_WASHER_MK2, new Item.Settings().group(ITEM_GROUP));
+    public static final Item ELECTRIC_ORE_WASHER_MK3 = new HeadMachineItem(HTBlocks.ELECTRIC_ORE_WASHER_MK3, new Item.Settings().group(ITEM_GROUP));
 
 
-    public static Item GUIDE_ITEM_ELECTRONICS = new HeadItem(new Item.Settings(), "ewogICJ0aW1lc3RhbXAiIDogMTYxOTk3MDIyMjQzOCwKICAicHJvZmlsZUlkIiA6ICI2OTBkMDM2OGM2NTE0OGM5ODZjMzEwN2FjMmRjNjFlYyIsCiAgInByb2ZpbGVOYW1lIiA6ICJ5emZyXzciLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDI0OGVhYTQxNGNjZjA1NmJhOTY5ZTdkODAxZmI2YTkyNzhkMGZlYWUxOGUyMTczNTZjYzhhOTQ2NTY0MzU1ZiIsCiAgICAgICJtZXRhZGF0YSIgOiB7CiAgICAgICAgIm1vZGVsIiA6ICJzbGltIgogICAgICB9CiAgICB9CiAgfQp9");
+    public static final Item GUIDE_ITEM_ELECTRONICS = new HeadItem(new Item.Settings().group(ITEM_GROUP), "ewogICJ0aW1lc3RhbXAiIDogMTYxOTk3MDIyMjQzOCwKICAicHJvZmlsZUlkIiA6ICI2OTBkMDM2OGM2NTE0OGM5ODZjMzEwN2FjMmRjNjFlYyIsCiAgInByb2ZpbGVOYW1lIiA6ICJ5emZyXzciLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDI0OGVhYTQxNGNjZjA1NmJhOTY5ZTdkODAxZmI2YTkyNzhkMGZlYWUxOGUyMTczNTZjYzhhOTQ2NTY0MzU1ZiIsCiAgICAgICJtZXRhZGF0YSIgOiB7CiAgICAgICAgIm1vZGVsIiA6ICJzbGltIgogICAgICB9CiAgICB9CiAgfQp9");
 
-    //public static Item ENGINE = new HeadItem(new Item.Settings(), "");
+    //public static final Item ENGINE = new HeadItem(new Item.Settings().group(ITEM_GROUP), "");
 
     public static void createItems() {
         register("guide_book", GUIDE_BOOK);

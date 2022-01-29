@@ -26,10 +26,8 @@ public class RecipeBooks {
         AtomicInteger page = new AtomicInteger();
         final int maxPage = (int) Math.ceil((double) recipeSize / 9);
 
-        SimpleGui gui = new SimpleGui(ScreenHandlerType.GENERIC_9X3, player, false) {
-            @Override
-            public void onUpdate(boolean firstUpdate) {
-                super.onUpdate(firstUpdate);
+        var gui = new SimpleGui(ScreenHandlerType.GENERIC_9X3, player, false) {
+            public void draw(boolean firstUpdate) {
 
                 if (firstUpdate) {
                     for (int x = 0; x < 9; x++) {
@@ -45,7 +43,7 @@ public class RecipeBooks {
                     if (page.get() * 9 + x < recipeSize) {
                         GrinderRecipe recipe = recipeList.get(page.get() * 9 + x);
 
-                        this.setSlot(x, recipe.getInput().getMatchingStacksClient()[0]);
+                        this.setSlot(x, recipe.getInput().getMatchingStacks()[0]);
                         this.setSlot(x + 9, recipe.getOutput().copy());
                     }
 
@@ -62,7 +60,7 @@ public class RecipeBooks {
                                     page.set(0);
                                 }
 
-                                this.onUpdate(false);
+                                this.draw(false);
                             }));
                     this.setSlot(this.size - 3, new GuiElementBuilder(Items.ARROW)
                             .setName(new TranslatableText("spectatorMenu.next_page").setStyle(Style.EMPTY.withItalic(false)))
@@ -71,11 +69,13 @@ public class RecipeBooks {
                                     page.set(maxPage - 1);
                                 }
 
-                                this.onUpdate(false);
+                                this.draw(false);
                             }));
                 }
             }
         };
+
+        gui.draw(true);
         gui.setTitle(new TranslatableText("gui.grinder.recipes"));
 
         gui.open();

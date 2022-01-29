@@ -1,16 +1,14 @@
 package eu.pb4.honeytech.blockentity.electric;
 
-import eu.pb4.honeytech.block.MachineBlock;
+import eu.pb4.honeytech.block.ElectricMachine;
 import eu.pb4.honeytech.block.electric.CoalGeneratorBlock;
 import eu.pb4.honeytech.blockentity.EnergyHolder;
 import eu.pb4.honeytech.blockentity.HTBlockEntities;
-import eu.pb4.honeytech.item.HTItems;
 import eu.pb4.honeytech.other.HTUtils;
 import eu.pb4.honeytech.other.ImplementedInventory;
-import eu.pb4.polymer.interfaces.VirtualObject;
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
-import net.fabricmc.fabric.impl.content.registry.FuelRegistryImpl;
+import net.fabricmc.fabric.api.registry.FuelRegistry;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -18,7 +16,6 @@ import net.minecraft.block.entity.LockableContainerBlockEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.BucketItem;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
@@ -32,7 +29,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.property.Properties;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -40,26 +36,29 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import team.reborn.energy.api.EnergyStorage;
+import team.reborn.energy.api.base.SimpleEnergyStorage;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-public class CoalGeneratorBlockEntity extends LockableContainerBlockEntity implements  EnergyHolder, ImplementedInventory, VirtualObject {
+public class CoalGeneratorBlockEntity extends LockableContainerBlockEntity implements ImplementedInventory, EnergyHolder {
     public static Random RANDOM = new Random();
     public final Set<Gui> openGuis = new HashSet<>();
     public boolean isGenerating = false;
     public int cooldown = -1;
     public int maxCooldown = 0;
     public boolean isPaused = false;
-    private double energy = 0;
     private final DefaultedList<ItemStack> items = DefaultedList.ofSize(2, ItemStack.EMPTY);
+
+    public final SimpleEnergyStorage energyStorage;
 
     public CoalGeneratorBlockEntity(BlockPos pos, BlockState state) {
         super(HTBlockEntities.COAL_GENERATOR, pos ,state);
+        this.energyStorage = HTUtils.createEnergyStorage(this, ElectricMachine.of(state));
+
     }
 
     @Override
@@ -78,31 +77,30 @@ public class CoalGeneratorBlockEntity extends LockableContainerBlockEntity imple
 
         int slot = -1;
 
-        Map<Item, Integer> fuels = FuelRegistryImpl.INSTANCE.getFuelTimes();
 
-        MachineBlock machine = ((MachineBlock) self.getCachedState().getBlock());
+        ElectricMachine machine = ((ElectricMachine) self.getCachedState().getBlock());
 
         for (int x = 0; x < self.size(); x++) {
             ItemStack stack = self.getStack(x);
-            if (!stack.isEmpty() && fuels.containsKey(stack.getItem())) {
+            if (!stack.isEmpty() && FuelRegistry.INSTANCE.get(stack.getItem()) != 0) {
                 slot = x;
                 break;
             }
         }
 
-        if (self.cooldown > 0 && !self.isFullEnergy()) {
+        if (self.cooldown > 0 && self.energyStorage.getCapacity() > self.energyStorage.getAmount()) {
             self.cooldown--;
             self.isPaused = false;
-            self.energy += machine.getPerTickEnergyProduction();
+            self.energyStorage.amount = Math.min(self.energyStorage.getAmount() + machine.getPerTickEnergyProduction(), self.energyStorage.getCapacity());
         } else {
             self.isPaused = true;
         }
 
-        if (self.cooldown <= 0 && !self.isFullEnergy() && slot != -1) {
+        if (self.cooldown <= 0 && self.energyStorage.getCapacity() > self.energyStorage.getAmount() && slot != -1) {
             ItemStack stack = self.removeStack(slot, 1);
 
             if (stack.getCount() > 0) {
-                self.maxCooldown = (int) (fuels.get(stack.getItem()).intValue() / ((CoalGeneratorBlock) self.getCachedState().getBlock()).tier.energyMultiplier);
+                self.maxCooldown = (int) (FuelRegistry.INSTANCE.get(stack.getItem()).intValue() / ((CoalGeneratorBlock) self.getCachedState().getBlock()).tier.energyMultiplier);
                 self.cooldown = self.maxCooldown;
                 self.isGenerating = true;
                 if (!self.getCachedState().get(Properties.LIT)) {
@@ -115,14 +113,32 @@ public class CoalGeneratorBlockEntity extends LockableContainerBlockEntity imple
             }
         }
 
-        if (slot == -1 || self.isFullEnergy()) {
+        if (slot == -1 || self.energyStorage.getCapacity() <= self.energyStorage.getAmount()) {
             self.isGenerating = false;
             if (self.getCachedState().get(Properties.LIT)) {
                 self.world.setBlockState(self.pos, self.getCachedState().with(Properties.LIT, false));
             }
         }
 
-        EnergyHolder.provideEnergyToConsumers(self, self.world, self.pos, machine.getMaxEnergyOutput());
+        for (var dir : Direction.values()) {
+            var storage = EnergyStorage.SIDED.find(world, self.getPos().offset(dir), dir.getOpposite());
+
+            if (storage != null && storage.supportsInsertion()) {
+                try (var transaction = Transaction.openOuter()) {
+                    // Try to extract, will return how much was actually extracted
+                    long amountExtracted = self.energyStorage.extract(machine.getMaxEnergyOutput(), transaction);
+                    if (amountExtracted != 0) {
+                        var rest = amountExtracted - storage.insert(amountExtracted, transaction);
+                        if (rest != amountExtracted) {
+                            self.energyStorage.insert(rest, transaction);
+                            transaction.commit();
+                        } else {
+                            transaction.abort();
+                        }
+                    }
+                }
+            }
+        }
 
         if (self.isGenerating) {
             try {
@@ -151,20 +167,19 @@ public class CoalGeneratorBlockEntity extends LockableContainerBlockEntity imple
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound tag) {
+    public void writeNbt(NbtCompound tag) {
         super.writeNbt(tag);
-        tag.putDouble("Energy", this.energy);
+        tag.putLong("Energy", this.energyStorage.amount);
         tag.putInt("Cooldown", this.cooldown);
         tag.putInt("MaxCooldown", this.maxCooldown);
 
         Inventories.writeNbt(tag, items);
-        return tag;
     }
 
     @Override
     public void readNbt(NbtCompound tag) {
         super.readNbt(tag);
-        this.energy = tag.getDouble("Energy");
+        this.energyStorage.amount = tag.getLong("Energy");
         this.cooldown = tag.getInt("Cooldown");
         this.maxCooldown = tag.getInt("MaxCooldown");
         Inventories.readNbt(tag, items);
@@ -180,39 +195,6 @@ public class CoalGeneratorBlockEntity extends LockableContainerBlockEntity imple
         return null;
     }
 
-    @Override
-    public double getEnergyAmount() {
-        return this.energy;
-    }
-
-    @Override
-    public void setEnergyAmount(double amount) {
-        this.energy = Math.min(amount, this.getMaxEnergyCapacity());
-        if (this.energy < 0.001) {
-            this.energy = 0;
-        }
-    }
-
-    @Override
-    public boolean isEnergySource() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnergyConsumer() {
-        return false;
-    }
-
-    @Override
-    public double getMaxEnergyCapacity() {
-        return ((MachineBlock) this.getCachedState().getBlock()).getCapacity();
-    }
-
-    @Override
-    public double getMaxEnergyTransferCapacity(Direction dir, boolean isDraining) {
-        return ((MachineBlock) this.getCachedState().getBlock()).getMaxEnergyOutput();
-    }
-
     public void openInventory(ServerPlayerEntity player) {
         if (this.checkUnlocked(player)) {
             Gui gui = new Gui(this, player);
@@ -221,11 +203,10 @@ public class CoalGeneratorBlockEntity extends LockableContainerBlockEntity imple
         }
     }
 
-
     public static class Gui extends SimpleGui {
         private static final Style BATTERY_STYLE = Style.EMPTY.withItalic(false).withColor(Formatting.GRAY);
         private final CoalGeneratorBlockEntity blockEntity;
-        private final double energyLast = -1;
+        private final long energyLast = -1;
         private int lastCooldown = -1;
         private boolean wasPaused = false;
 
@@ -234,32 +215,29 @@ public class CoalGeneratorBlockEntity extends LockableContainerBlockEntity imple
             Block block = blockEntity.getCachedState().getBlock();
             this.setTitle(new TranslatableText(block.getTranslationKey()));
             this.blockEntity = blockEntity;
+            this.setSlotRedirect(0, new Slot(this.blockEntity, 0, 0, 0));
+            this.setSlotRedirect(1, new Slot(this.blockEntity, 1, 0, 0));
+            updateBattery();
+            this.lastCooldown = this.blockEntity.cooldown;
+            this.wasPaused = this.blockEntity.isPaused;
+            this.player.networkHandler.sendPacket(new ScreenHandlerPropertyUpdateS2CPacket(this.syncId, 1, this.blockEntity.maxCooldown));
+            this.player.networkHandler.sendPacket(new ScreenHandlerPropertyUpdateS2CPacket(this.syncId, 0,
+                    this.blockEntity.cooldown > 0 ? this.blockEntity.cooldown : 0));
+
+            this.player.networkHandler.sendPacket(new ScreenHandlerPropertyUpdateS2CPacket(this.syncId, 2, 2));
+            this.player.networkHandler.sendPacket(new ScreenHandlerPropertyUpdateS2CPacket(this.syncId, 3,
+                    this.blockEntity.cooldown > 0 ? this.blockEntity.isPaused ? 1 : 2 : 0));
         }
 
-        @Override
-        public void onUpdate(boolean firstUpdate) {
-            if (firstUpdate) {
-                this.setSlotRedirect(0, new Slot(this.blockEntity, 0, 0, 0));
-                this.setSlotRedirect(1, new Slot(this.blockEntity, 1, 0, 0));
-
-                this.setSlot(2, new GuiElementBuilder(HTItems.BATTERY).setName(HTUtils.getText("gui", "battery_charge",
-                        new LiteralText(HTUtils.formatEnergy(this.blockEntity.getEnergyAmount())).formatted(Formatting.WHITE),
-                        new LiteralText(HTUtils.formatEnergy(this.blockEntity.getMaxEnergyCapacity())).formatted(Formatting.WHITE),
-                        new LiteralText(HTUtils.dtt(this.blockEntity.getEnergyAmount() / this.blockEntity.getMaxEnergyCapacity() * 100) + "%").formatted(Formatting.WHITE)
-                ).setStyle(BATTERY_STYLE)));
-            }
-            super.onUpdate(firstUpdate);
+        private void updateBattery() {
+            this.setSlot(2, HTUtils.createBatteryIcon(this.blockEntity.energyStorage));
         }
 
         @Override
         public void onTick() {
             if (this.isOpen()) {
-                if (!MathHelper.approximatelyEquals(this.blockEntity.getEnergyAmount(), this.energyLast)) {
-                    this.getSlot(2).getItemStack().setCustomName(HTUtils.getText("gui", "battery_charge",
-                            new LiteralText(HTUtils.formatEnergy(this.blockEntity.getEnergyAmount())).formatted(Formatting.WHITE),
-                            new LiteralText(HTUtils.formatEnergy(this.blockEntity.getMaxEnergyCapacity())).formatted(Formatting.WHITE),
-                            new LiteralText(HTUtils.dtt(this.blockEntity.getEnergyAmount() / this.blockEntity.getMaxEnergyCapacity() * 100) + "%").formatted(Formatting.WHITE)
-                    ).setStyle(BATTERY_STYLE));
+                if (this.blockEntity.energyStorage.amount != this.energyLast) {
+                    this.updateBattery();
                 }
 
                 if (this.lastCooldown != this.blockEntity.cooldown || this.wasPaused != this.blockEntity.isPaused) {
@@ -283,5 +261,10 @@ public class CoalGeneratorBlockEntity extends LockableContainerBlockEntity imple
             this.blockEntity.openGuis.remove(this);
             super.onClose();
         }
+    }
+
+    @Override
+    public EnergyStorage getEnergy() {
+        return this.energyStorage;
     }
 }

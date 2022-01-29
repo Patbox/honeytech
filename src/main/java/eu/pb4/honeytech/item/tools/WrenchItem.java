@@ -1,7 +1,5 @@
 package eu.pb4.honeytech.item.tools;
 
-import java.util.Collection;
-
 import eu.pb4.honeytech.block.WrenchableBlock;
 import eu.pb4.honeytech.item.AdditionalItemActions;
 import eu.pb4.honeytech.item.general.GlowingItem;
@@ -26,6 +24,8 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
 
 public class WrenchItem extends GlowingItem implements AdditionalItemActions {
 
@@ -66,8 +66,8 @@ public class WrenchItem extends GlowingItem implements AdditionalItemActions {
             if (collection.isEmpty()) {
                 sendMessage(player, new TranslatableText(Items.DEBUG_STICK.getTranslationKey() + ".empty", blockId));
             } else {
-                String targetPropertyBlock = stack.getOrCreateTag().getString("TargetPropertyBlock");
-                Property<?> property = blockId.equals(targetPropertyBlock) ? stateManager.getProperty(stack.getTag().getString("TargetPropertyState")) : null;
+                String targetPropertyBlock = stack.getOrCreateNbt().getString("TargetPropertyBlock");
+                Property<?> property = blockId.equals(targetPropertyBlock) ? stateManager.getProperty(stack.getNbt().getString("TargetPropertyState")) : null;
                 if (update) {
                     if (property == null) {
                         property = collection.iterator().next();
@@ -81,8 +81,8 @@ public class WrenchItem extends GlowingItem implements AdditionalItemActions {
                 } else {
                     property = cycle(collection, property, player.shouldCancelInteraction());
                     String string3 = property.getName();
-                    stack.getTag().putString("TargetPropertyBlock", blockId);
-                    stack.getTag().putString("TargetPropertyState", string3);
+                    stack.getNbt().putString("TargetPropertyBlock", blockId);
+                    stack.getNbt().putString("TargetPropertyState", string3);
 
                     sendMessage(player, new TranslatableText(Items.DEBUG_STICK.getTranslationKey() + ".select", string3, getValueString(state, property)));
                 }
